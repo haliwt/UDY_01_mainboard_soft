@@ -103,7 +103,7 @@ typedef struct _process{
    uint8_t gpower_on;
    uint8_t gDry;
    uint8_t gPlasma;
-   uint8_t gAI;
+
    uint8_t gMouse;
    uint8_t works_two_hours_interval_flag;
    uint8_t g_manual_shutoff_dry_flag;
@@ -140,24 +140,14 @@ typedef struct _process{
    uint8_t ptc_warning;
    uint8_t fan_warning ;
 
- //  uint8_t  gdisp_time_minutes;
- //  uint8_t  gdisp_timer_time_minutes;
-
-
-
-
 
    //timer
    
-
-
-
-  
-  
+   uint8_t gTimer_run_function_counter;
  
    uint8_t   gTimer_fan_run_one_minute;
 
-   uint8_t gTimer_disp_temp_humidity_vlaue;
+  
    uint8_t gTimer_display_adc_value;
 
    uint8_t gTimer_send_dht11_disp;

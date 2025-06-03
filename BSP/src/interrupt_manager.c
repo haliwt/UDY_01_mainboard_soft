@@ -26,28 +26,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	   if(tm0> 999){ //1s
 	      tm0=0;
 	
-
-
-	
-
-		
-		   g_pro.gTimer_fan_run_one_minute++;
+			g_pro.gTimer_fan_run_one_minute++;
 		
 		   g_pro.gTimer_two_hours_counter++;
-		   g_pro.gTimer_disp_temp_humidity_vlaue++;
+		 
 		   g_pro.gTimer_display_adc_value++;
 	
 		   g_pro.gTimer_send_dht11_disp++;
-	
+	       g_pro.gTimer_run_function_counter++;
 		
-		   
-		  
-
-		
-
-   
-
-	   }
+		 }
 	   
 
    }

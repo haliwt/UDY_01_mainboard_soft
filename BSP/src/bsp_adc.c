@@ -154,7 +154,7 @@ static void Judge_Fan_State(uint16_t adc_value)
 {
 
   static uint8_t detect_error_times;
-   if(adc_value <550){ //500
+   if(adc_value <450){ //500
          detect_error_times++;
 	          
 		if(detect_error_times >0){

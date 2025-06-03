@@ -85,7 +85,7 @@ void power_onoff_handler(uint8_t data)
 **********************************************************************/
 void power_on_init_ref(void)
 {
-	       g_pro.gAI =1;
+	     
 		   g_pro.gDry =1;
 		   g_pro.gPlasma =1;
 		   g_pro.gMouse = 1;
@@ -96,19 +96,12 @@ void power_on_init_ref(void)
 
 	
 		   g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
-		
-		 
-		   // function led is turn on 
-         
-		   //display smg led turn on
+		   g_pro.g_manual_shutoff_dry_flag = 0;
 
-		  
-		
-		   
-           //timer 
-           g_pro.g_manual_shutoff_dry_flag = 0;
+	      DRY_OPEN();
+	      mouse_open();
 
-	    
+	      PLASMA_OPEN();
 
 
 
@@ -124,7 +117,7 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t read_error_flag,switch_adc,switch_dht11;
+   static uint8_t switch_adc ;//switch_dht11;
  
 	switch(gl_run.process_on_step){
 
@@ -135,8 +128,8 @@ void power_on_run_handler(void)
 	  
 		   
 		   	  
-		   	SendData_Set_Command(CMD_POWER,open);
-			osDelay(5);
+		   //	SendData_Set_Command(CMD_POWER,open);
+			//osDelay(5);
 		   	
 		 
         
@@ -171,28 +164,22 @@ void power_on_run_handler(void)
 
 	 case 1:
 
-      if( g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
-	
-		
-
-		  
-		    if(g_pro.gTimer_send_dht11_disp > 2){ //3s
+     
+	      if(g_pro.gTimer_send_dht11_disp > 2){ //3s
 		       g_pro.gTimer_send_dht11_disp=0;
 	           Update_DHT11_ToDisplayBoard_Value();
-
+               
 		   
 		  }
 
-		  gl_run.process_on_step =3; 
 		  
-      }
-	  else{
+		  
+      
+	 
+        gl_run.process_on_step =2; 
 	  
-	     fault_handler();
-         gl_run.process_on_step =3; 
-	  }
 
-	 case 3: //WIFI link process
+	 case 2: //WIFI link process
 	 
         
 
@@ -218,14 +205,12 @@ void power_on_run_handler(void)
             }
 		   }
 
-        
+      
 	  gl_run.process_on_step =1;
 
 	 break;
 
-	 default :
-
-	  break;
+	
 
 	}
    

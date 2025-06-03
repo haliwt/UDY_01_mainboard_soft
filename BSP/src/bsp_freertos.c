@@ -70,12 +70,12 @@ typedef struct Msg
 }MSG_T;
 
 MSG_T   gl_tMsg; /* 定义丢�个结构体用于消息队列 */
-uint8_t ucKeyCode;
-uint8_t uckey_number;
-uint8_t key_power_flag,decoder_flag ;
+
+
+
 uint8_t check_code;
 
-uint8_t power_on_key_counter, mode_key_counter;
+
 
 
 void freeRTOS_Handler(void)
@@ -147,7 +147,7 @@ static void vTaskRunPro(void *pvParameters)
   while(1){
     
 	
-
+   
 	power_onoff_handler(g_pro.gpower_on);
 
 	

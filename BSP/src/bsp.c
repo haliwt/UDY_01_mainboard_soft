@@ -42,23 +42,16 @@ void bsp_init(void)
 ******************************************************************************/
 void mainboard_fun_handler(void)
 {
-   //static uint16_t mainboard_time;
+ 
 
-   mainboard_time ++ ;
+   
 
-   if(mainboard_time > 100){// 2s  //300 ~= 6s, 50 ~=1s
-      mainboard_time=0;
+   if(g_pro.gTimer_run_function_counter > 2){// 2s  //300 ~= 6s, 50 ~=1s
+    
+	   g_pro.gTimer_run_function_counter=0;
 
 
-   if(g_pro.gAI == 1){
-  
-      
-   	
-   	}
-    else{
-       
 
-	}
 
 	if(g_pro.gDry == 1 ){
 		DRY_OPEN();
@@ -92,7 +85,7 @@ void mainboard_fun_handler(void)
 		PLASMA_CLOSE();
 	}
 
-
+     Fan_Full_Speed();
 	
    	}
 	
@@ -103,17 +96,7 @@ static void mainboard_special_fun(void)
 {
    //static uint16_t mainboard_time;
 
-   if(g_pro.gAI == 1){
 
-   
-	
-   	
-   	}
-    else{
-     
-	  
-
-	}
 
 	if(g_pro.gDry == 1){
 		DRY_OPEN();

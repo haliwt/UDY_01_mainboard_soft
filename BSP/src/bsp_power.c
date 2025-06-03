@@ -165,7 +165,7 @@ void power_on_run_handler(void)
 	   g_pro.delay_run_adc_counter=0;
 
 	   Update_DHT11_ToDisplayBoard_Value();
-
+         Fan_Full_Speed();
 	   gl_run.process_on_step =1;
 	 break;
 
@@ -257,7 +257,7 @@ void power_off_run_handler(void)
 	  SendData_Set_Command(CMD_POWER,close);
 	  osDelay(5);
     
-	
+	 
         
 
        gl_run.process_off_step = 1;

@@ -9,11 +9,16 @@
 #define BSP_INC_BSP_FAN_H_
 #include "main.h"
 
-#define FAN_COM_SetHigh()         do{FAN_OUT2_GPIO_Port->BSRR |=FAN_OUT2_Pin;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_SET)    // output high level
-#define FAN_COM_SetLow()          do{FAN_OUT2_GPIO_Port->BSRR |=(uint32_t)FAN_OUT2_Pin<<16;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_RESET)    // output low level
+//#define FAN_COM_SetHigh()         do{FAN_OUT2_GPIO_Port->BSRR |=FAN_OUT2_Pin;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_SET)    // output high level
+//#define FAN_COM_SetLow()          do{FAN_OUT2_GPIO_Port->BSRR |=(uint32_t)FAN_OUT2_Pin<<16;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_RESET)    // output low level
 
-#define FAN_CCW_SetHigh()         do{FAN_OUT1_GPIO_Port->BSRR |=FAN_OUT1_Pin;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_COM_GPIO_Port-)    // output high level
-#define FAN_CCW_SetLow()          do{FAN_OUT1_GPIO_Port->BSRR |=(uint32_t)FAN_OUT1_Pin<<16;}while(0)    // output low level
+#define FAN_CCW_SetHigh()         do{FAN_OUT2_GPIO_Port->BSRR |=FAN_OUT2_Pin;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_SET)    // output high level
+#define FAN_CCW_SetLow()          do{FAN_OUT2_GPIO_Port->BSRR |=(uint32_t)FAN_OUT2_Pin<<16;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_RESET)    // output low level
+
+
+
+#define FAN_COM_SetHigh()         do{FAN_OUT1_GPIO_Port->BSRR |=FAN_OUT1_Pin;}while(0)//HAL_GPIO_WritePin(FAN_GPIO,FAN_COM_GPIO_Port-)    // output high level
+#define FAN_COM_SetLow()          do{FAN_OUT1_GPIO_Port->BSRR |=(uint32_t)FAN_OUT1_Pin<<16;}while(0)    // output low level
 
 
 

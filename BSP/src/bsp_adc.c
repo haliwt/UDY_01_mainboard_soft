@@ -140,7 +140,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 	adc_fan_hex = Get_Adc_Average(channel,times);
 
     g_pro.fan_detect_voltage  =(uint16_t)((adc_fan_hex * 3300)/4096); //amplification 1000 ,3.111V -> 3111
-	HAL_Delay(5);
+	osDelay(10);
 
 
 	Judge_Fan_State(g_pro.fan_detect_voltage);
@@ -157,11 +157,11 @@ static void Judge_Fan_State(uint16_t adc_value)
    if(adc_value <450){ //500
          detect_error_times++;
 	          
-		if(detect_error_times >0){
-			detect_error_times=0;
+		if(detect_error_times >1){
+			detect_error_times=2;
 		   g_pro.fan_warning = 1;
 
-		
+		   DRY_CLOSE();
 
 		
 		  Buzzer_Fan_Error_Sound();
@@ -170,7 +170,7 @@ static void Judge_Fan_State(uint16_t adc_value)
 		  osDelay(5);
 
 		}
-		detect_error_times++;
+		
 
      }
 

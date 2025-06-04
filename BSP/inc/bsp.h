@@ -111,6 +111,7 @@ typedef struct _process{
 
    uint8_t g_humidity_value;
    uint8_t g_temperature_value;
+   uint8_t detect_fan_error_times;
 
   
 

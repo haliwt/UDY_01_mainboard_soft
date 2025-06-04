@@ -93,6 +93,7 @@ void power_on_init_ref(void)
 	//display time timing value 
 	g_pro.fan_warning =0 ;
 	g_pro.ptc_warning =0;
+	g_pro.detect_fan_error_times=0;
 
 
 	g_pro.gdisp_hours_value =0;
@@ -179,7 +180,7 @@ void power_on_run_handler(void)
 	 
         
 
-	    if(g_pro.gTimer_display_adc_value > 5 && g_pro.works_two_hours_interval_flag==0){
+	    if(g_pro.gTimer_display_adc_value > 2 && g_pro.works_two_hours_interval_flag==0){
 		 	g_pro.gTimer_display_adc_value=0;
 
             switch_adc = switch_adc ^ 0x01;
@@ -188,7 +189,7 @@ void power_on_run_handler(void)
 			}
 			else{
 				
-				if(g_pro.delay_run_adc_counter < 5){
+				if(g_pro.delay_run_adc_counter < 3){
 					g_pro.delay_run_adc_counter++;
 					g_pro.fan_detect_voltage= 0xFEE;
 				  

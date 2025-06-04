@@ -1,6 +1,8 @@
 #include "bsp_adc.h"
 #include "bsp.h"
 
+#define FAN_THRESHOLD_VALUE     600
+
 static uint16_t Get_Adc_Channel(uint32_t ch) ;
 
 static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
@@ -153,12 +155,11 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 static void Judge_Fan_State(uint16_t adc_value)
 {
 
-  static uint8_t detect_error_times;
-   if(adc_value <450){ //500
-         detect_error_times++;
+  if(adc_value <FAN_THRESHOLD_VALUE){ //500
+         g_pro.detect_fan_error_times++;
 	          
-		if(detect_error_times >1){
-			detect_error_times=2;
+		if(g_pro.detect_fan_error_times >1){
+			g_pro.detect_fan_error_times=2;
 		   g_pro.fan_warning = 1;
 
 		   DRY_CLOSE();

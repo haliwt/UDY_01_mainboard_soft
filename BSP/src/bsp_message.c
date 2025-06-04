@@ -103,8 +103,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
           g_pro.gDry = 1;
 		
 		  //manual close flag :
-		   SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
-		  g_pro.g_manual_shutoff_dry_flag = 0;
+		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
+		   osDelay(5);
 		  if(g_pro.works_two_hours_interval_flag==0){
 		      DRY_OPEN();
 		  }
@@ -116,15 +116,15 @@ void receive_data_from_displayboard(uint8_t *pdata)
        }
        else if(pdata[4] == 0x0){
 	   	 if(g_pro.gpower_on == power_on){
-		  g_pro.g_manual_shutoff_dry_flag = 1;
+		
           buzzer_sound();
           g_pro.gDry =0;
 	
           DRY_CLOSE();
-		  if(g_disp.g_second_disp_flag ==1){
-		  SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
-		   osDelay(5);
-		  }
+		 
+		  SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
+		  osDelay(5);
+		  
             
          
 	   	 }
@@ -143,33 +143,27 @@ void receive_data_from_displayboard(uint8_t *pdata)
         
         if(g_pro.gpower_on == power_on){
 
-        g_pro.gDry = 1;
-		
+        
+		 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.01.07
+		 osDelay(5);
+		 g_pro.gDry = 1;
      	if(g_pro.works_two_hours_interval_flag==0){
 		  	DRY_OPEN();
      	 }
 
-	 	 
-        
-       
-       
-				}
+	 	}
 	  }
       else if(pdata[4] == 0x0){
         if(g_pro.gpower_on == power_on){
 
-         
-            g_pro.gDry =0;
+          SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.01.07
+		   osDelay(5);
+           g_pro.gDry =0;
 		
-          	DRY_CLOSE();
-		  
-		
-            
-      
-       
-      }
+          DRY_CLOSE();
+		  }
 		}
-	  	}
+	  }
      break;
 
      case 0x03: //PLASMA 打开关闭指令
@@ -347,7 +341,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			   if(g_pro.gpower_on == power_on){ 
 				buzzer_sound();
 				
-                g_pro.g_manual_shutoff_dry_flag =0;
+  
              
 				
 			

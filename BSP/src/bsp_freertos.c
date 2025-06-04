@@ -91,50 +91,6 @@ void freeRTOS_Handler(void)
 }
 
 /**********************************************************************************************************
-*	凄1�7 敄1�7 各1�7: vTaskTaskUserIF
-*	功能说明: 接口消息处理〄1�7
-*	彄1�7    叄1�7: pvParameters 是在创建该任务时传��的形参
-*	迄1�7 囄1�7 倄1�7: 旄1�7
-*   伄1�7 兄1�7 纄1�7: 1  (数��越小优先级越低，这个跟uCOS相反)
-**********************************************************************************************************/
-#if 0
-static void vTaskDecoderPro(void *pvParameters)
-{
-    BaseType_t xResult;
-	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5000); /* 设置最大等待时间为30ms */
-	uint32_t ulValue;
-
-
-    while(1)
-    {
-
-	xResult = xTaskNotifyWait(0x00000000,
-						0xFFFFFFFF,     /* Reset the notification value to 0 on */
-						&ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-						portMAX_DELAY);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
-
-	if( xResult == pdPASS )
-	{
-			/* 接收到消息，检测那个位被按下 */
-
-		if((ulValue & DECODER_BIT_9) != 0){
-  
-			    gl_tMsg.disp_rx_cmd_done_flag = 0;
-				check_code =  bcc_check(gl_tMsg.usData,gl_tMsg.ulid);
-
-				if(check_code == gl_tMsg.bcc_check_code ){
-
-				 receive_data_from_displayboard(gl_tMsg.usData);
-				// memset(gl_tMsg.usData, 0, 4); // 初始化为 0
-				 
-			}
-				
-		 }
-	 }
-   }
-}
-#endif 
-/**********************************************************************************************************
 *	Function Name: static void vTaskRunPro(void *pvParameters)
 *	Function:
 *	Input Ref: pvParameters 是在创建该任务时传��的形参
@@ -149,10 +105,6 @@ static void vTaskRunPro(void *pvParameters)
 	
    
 	power_onoff_handler(g_pro.gpower_on);
-
-	
-
-	
 
 	vTaskDelay(10);
 
@@ -215,14 +167,7 @@ static void vTaskStart(void *pvParameters)
 void AppTaskCreate (void)
 {
 
-//  xTaskCreate( vTaskDecoderPro,    		/* 任务函数  */
-//                 "vTaskDecoderPro",  		/* 任务各1�7    */
-//                 128,         		/* stack大小，单位word，也就是4字节 */
-//                 NULL,        		/* 任务参数  */
-//                 2,           		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
-//                 &xHandleTaskDecoderPro); /* 任务句柄  */
-
-  xTaskCreate( vTaskRunPro,    		/* 任务函数  */
+	xTaskCreate( vTaskRunPro,    		/* 任务函数  */
                  "vTaskRunPro",  		/* 任务各1�7    */
                  128,         		/* stack大小，单位word，也就是4字节 */
                  NULL,        		/* 任务参数  */

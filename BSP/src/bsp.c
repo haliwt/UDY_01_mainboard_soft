@@ -43,10 +43,7 @@ void bsp_init(void)
 void mainboard_fun_handler(void)
 {
  
-
-   
-
-   if(g_pro.gTimer_run_function_counter > 2){// 2s  //300 ~= 6s, 50 ~=1s
+	if(g_pro.gTimer_run_function_counter > 2){// 2s  //300 ~= 6s, 50 ~=1s
     
 	   g_pro.gTimer_run_function_counter=0;
 

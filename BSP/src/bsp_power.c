@@ -86,22 +86,40 @@ void power_onoff_handler(uint8_t data)
 void power_on_init_ref(void)
 {
 	     
-		   g_pro.gDry =1;
-		   g_pro.gPlasma =1;
-		   g_pro.gMouse = 1;
-		   g_pro.gTemp_value = 40;
-		   //display time timing value 
-		   g_pro.gdisp_hours_value =0;
-		   g_pro.gdisp_timer_hours_value =0; //设置定时时间，
+	g_pro.gDry =1;
+	g_pro.gPlasma =1;
+	g_pro.gMouse = 1;
+	g_pro.gTemp_value = 40;
+	//display time timing value 
+	g_pro.fan_warning =0 ;
+	g_pro.ptc_warning =0;
 
+
+	g_pro.gdisp_hours_value =0;
+	g_pro.gdisp_timer_hours_value =0; //设置定时时间，
+
+
+	g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
 	
-		   g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
-		   g_pro.g_manual_shutoff_dry_flag = 0;
 
-	      DRY_OPEN();
-	      mouse_open();
+	g_pro.gTimer_send_dht11_disp=5;
 
-	      PLASMA_OPEN();
+	g_pro.gTimer_two_hours_counter = 0;
+
+	gl_run.process_off_step=0;
+
+ 
+
+
+	g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
+
+	g_pro.gTimer_display_adc_value=0;
+	g_pro.delay_run_adc_counter=0;
+
+	DRY_OPEN();
+	mouse_open();
+
+	PLASMA_OPEN();
 
 
 
@@ -126,36 +144,14 @@ void power_on_run_handler(void)
        gl_run.process_off_step =0 ; //clear power off process step .
 
 	  
-		   
-		   	  
-		   //	SendData_Set_Command(CMD_POWER,open);
-			//osDelay(5);
-		   	
-		 
-        
-		Update_DHT11_ToDisplayBoard_Value();
+		 Update_DHT11_ToDisplayBoard_Value();
 			 
 		   
 		  power_on_init_ref();
 		
 		  
 		 
-	   g_pro.gTimer_send_dht11_disp=5;
-       
-	   g_pro.gTimer_two_hours_counter = 0;
-	  
-	   gl_run.process_off_step=0;
-	   
 	
-
-	   g_pro.g_manual_shutoff_dry_flag = 0;
-	
-		
-	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
-	   g_pro.fan_warning =0 ;
-	   g_pro.ptc_warning =0;
-	   g_pro.gTimer_display_adc_value=0;
-	   g_pro.delay_run_adc_counter=0;
 
 	   Update_DHT11_ToDisplayBoard_Value();
          Fan_Full_Speed();

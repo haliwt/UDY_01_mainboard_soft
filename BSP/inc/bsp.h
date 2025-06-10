@@ -120,7 +120,7 @@ typedef struct _process{
     
 
  
-   
+   uint8_t adc_judge_flag;
 
    uint8_t gTemp_value;
    uint8_t gset_temperture_value;

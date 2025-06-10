@@ -84,10 +84,6 @@ void power_on_init_ref(void)
 	
 	g_pro.detect_fan_error_times=0;
 
-
-
-
-    
     g_pro.gTimer_timer_minutes_counter = 0;
     g_pro.gTimer_timer_seconds_counter = 0;
 
@@ -143,15 +139,7 @@ void power_on_run_handler(void)
       if(g_pro.gTimer_display_adc_value > 2 ){
 		 	g_pro.gTimer_display_adc_value=0;
 
-     
-           Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
-
-		   Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
-
-			 
-			 sendData_Real_Temp(g_pro.read_ntc_temperature_value);
-		   
-	         osDelay(5);
+           Update_PtcADC_ToDisplayBoard_Value();
 			
 	  }
 
@@ -208,12 +196,6 @@ void power_off_run_handler(void)
        mainboard_close_all_fun();
 
        gl_run.process_off_step = 1;
-
-
-	 
-	
-	  
-
    break;
 
    case 1:

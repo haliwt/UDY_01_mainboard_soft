@@ -3,6 +3,7 @@
 #include "main.h"
 
 
+uint16_t Get_Adc_Channel(uint32_t ch) ;
 
 void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times);
 

@@ -17,7 +17,7 @@
 #include "bsp_freertos.h"
 
 
-
+#include "bsp_ntc.h"
 #include "bsp_buzzer.h"
 #include "bsp_fan.h"
 #include "bsp_mouse.h"
@@ -25,8 +25,8 @@
 
 #include "bsp_power.h"
 
-#include "bsp_delay.h"
-#include "bsp_dht11.h"
+//#include "bsp_delay.h"
+//#include "bsp_dht11.h"
 
 #include "bsp_message.h"
 #include "bsp_cmd_link.h"
@@ -98,14 +98,14 @@ typedef enum{
 typedef struct _process{
 
    //main board reference
-   uint16_t fan_detect_voltage;
-   uint16_t gTimer_two_hours_counter;
+   uint16_t read_ptc_voltage;
+   uint16_t gTimer_timer_minutes_counter;
    uint8_t gpower_on;
    uint8_t gDry;
    uint8_t gPlasma;
 
    uint8_t gMouse;
-   uint8_t works_two_hours_interval_flag;
+  
    
 
 
@@ -113,7 +113,11 @@ typedef struct _process{
    uint8_t g_temperature_value;
    uint8_t detect_fan_error_times;
 
-  
+    uint8_t temperature_decade;    // 温
+    uint8_t temperature_unit;//度值
+	uint8_t read_ntc_temperature_value;
+
+    
 
  
    
@@ -123,8 +127,8 @@ typedef struct _process{
    uint8_t temperature_init_value;
 
  
-   uint8_t g_disp_timer_or_temp_flag;
-   uint8_t gdisp_hours_value;
+
+
    uint8_t gdisp_minutes_value;
    uint8_t  disp_timer_minutes_value;
 
@@ -135,11 +139,9 @@ typedef struct _process{
    uint8_t first_connect_wifi_flag;
    uint8_t DMA_txComplete;
 
-   int8_t gdisp_timer_hours_value;
+
    
    
-   uint8_t ptc_warning;
-   uint8_t fan_warning ;
 
 
    //timer
@@ -150,8 +152,9 @@ typedef struct _process{
 
   
    uint8_t gTimer_display_adc_value;
+   uint8_t gTimer_timer_seconds_counter;
 
-   uint8_t gTimer_send_dht11_disp;
+
   
    
 }process_t;
@@ -166,12 +169,16 @@ void mainboard_fun_handler(void);
 
 void mainboard_close_all_fun(void);
 
-void works_run_two_hours_state(void);
+void works_run_eight_hours_state(void);
 
 void copy_cmd_hanlder(void);
 
 void  smart_phone_timer_power_on_handler(void);
 
 void fault_handler(void);
+
+
+
+
 
 #endif /* BSP_INC_BSP_H_ */

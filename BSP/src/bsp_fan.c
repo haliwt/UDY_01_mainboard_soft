@@ -26,29 +26,6 @@
 
 
 
-void FAN_Stop(void)
-{
- FAN_COM_SetLow();
- FAN_CCW_SetLow() ;
-  
-}
-
-
-
-
-
-void Fan_Full_Speed(void)
-{
-
-	FAN_COM_SetLow();
-	FAN_CCW_SetHigh();
-
-
-}
-
-
-
-
 
 
 

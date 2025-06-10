@@ -20,7 +20,8 @@ typedef enum {
 // DHT11 数据结构体
 typedef struct {
     uint8_t humidity;       // 湿度值
-    uint8_t temperature;    // 温度值
+    uint8_t temperature;    // 温
+   值
     int8_t  is_negative;    // 温度是否为负
 } DHT11_Data_TypeDef;
 

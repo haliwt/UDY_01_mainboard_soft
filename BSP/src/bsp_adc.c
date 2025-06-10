@@ -3,6 +3,8 @@
 
 #define FAN_THRESHOLD_VALUE     600
 
+#define TOLERANCE_ERROR      100
+
 static uint16_t Get_Adc_Channel(uint32_t ch) ;
 
 static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
@@ -11,7 +13,7 @@ static void Judge_PTC_Temperature_Value(uint16_t adc_ptc);
 
 static void Judge_Fan_State(uint16_t adc_value);
 
-uint16_t ptc_temp_voltage;
+
 
 /*****************************************************************
 *
@@ -55,7 +57,7 @@ static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times)
 	for(t=0;t<times;t++)
 	{
 		temp_val+=Get_Adc_Channel(ch);
-		osDelay(5);//delay_ms(5);
+		//osDelay(5);//delay_ms(5);
 	}
 	return temp_val/times;
 } 
@@ -64,23 +66,22 @@ static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times)
 
 void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 {
-    static uint8_t times_i;
+    
 	uint16_t adcx;
 	
 	adcx = Get_Adc_Average(channel,times);
 
-    ptc_temp_voltage  =(uint16_t)((adcx * 3300)/4096); //amplification 100 ,3.11V -> 311
+    g_pro.read_ptc_voltage  =(uint16_t)((adcx * 3300)/4096); //amplification 100 ,3.11V -> 311
 
-    if(times_i < 2){
-	    times_i++;
-	    ptc_temp_voltage=2000;
-	
-	}
+    g_pro.read_ptc_voltage = g_pro.read_ptc_voltage-100;
+
+
+   
 	#ifdef DEBUG
       printf("ptc= %d",gctl_t.ptc_temp_voltage);
 	#endif 
 
-	 Judge_PTC_Temperature_Value(ptc_temp_voltage);
+	// Judge_PTC_Temperature_Value(ptc_temp_voltage);
 
      
 }
@@ -98,7 +99,7 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 static void Judge_PTC_Temperature_Value(uint16_t adc_ptc)
 {
   
- #if HAINAN
+ #if 0
   if(adc_ptc < 215 || adc_ptc == 215){  //115 degree 
          g_pro.ptc_warning =1;
 
@@ -123,7 +124,7 @@ static void Judge_PTC_Temperature_Value(uint16_t adc_ptc)
 	   	}
   #endif 
 }
-
+#if 0
 /*****************************************************************
 	*
 	*Function Name: void Get_Fan_Adc_Fun(uint8_t channel,uint8_t times)
@@ -179,5 +180,22 @@ static void Judge_Fan_State(uint16_t adc_value)
 
 }
 
+#endif 
+
+
+void Update_PtcADC_ToDisplayBoard_Value(void)
+{
+
+	Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
+
+    Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
+
+	sendData_Real_Temp(g_pro.read_ntc_temperature_value);
+		   
+	osDelay(5);
+   
+		   
+	
+}
 
 

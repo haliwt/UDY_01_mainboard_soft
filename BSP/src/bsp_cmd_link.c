@@ -375,6 +375,13 @@ void sendData_Real_TimeHum(uint8_t hum, uint8_t temp)
     TransmitData(outputBuf, 9);
 }
 
+void sendData_Real_Temp(uint8_t temp) 
+{
+    uint8_t data[2] = {temp};
+    FillFrame(outputBuf, 0x0C, data, 1);
+    TransmitData(outputBuf, 8);
+}
+
 // 发送时间数据
 void SendWifiData_To_PanelTime(uint8_t hours, uint8_t minutes, uint8_t seconds) 
 {

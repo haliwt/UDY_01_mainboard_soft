@@ -23,11 +23,8 @@ process_t g_pro;
 ******************************************************************************/
 void bsp_init(void)
 {
-	 delay_init(64); 
-	 dht11_init();
 	
-	 g_pro.gset_temperture_value=40; //WT.EDIT 2025.05.05
-	 g_pro.gDry = 1;
+	
 	 
 
 }
@@ -43,7 +40,9 @@ void bsp_init(void)
 void mainboard_fun_handler(void)
 {
  
-	if(g_pro.gTimer_run_function_counter > 2){// 2s  //300 ~= 6s, 50 ~=1s
+   static uint8_t ac220v_fan_run_flag,run_cmd_flag;
+
+	if(g_pro.gTimer_run_function_counter > 0){// 2s  //300 ~= 6s, 50 ~=1s
     
 	   g_pro.gTimer_run_function_counter=0;
 
@@ -52,17 +51,28 @@ void mainboard_fun_handler(void)
 
 	if(g_pro.gDry == 1 ){
 		DRY_OPEN();
-	
-	    //sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
-	    //osDelay(5);
+		FAN_OPEN();
+	    ac220v_fan_run_flag =0;
+		run_cmd_flag=0;
 	}
 	else{
 		
 		DRY_CLOSE();
-	    //sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
-	    //osDelay(5);
-
+		
 	}
+
+	if(g_pro.gPlasma == 1){
+		
+		PLASMA_OPEN();
+		FAN_OPEN();
+		ac220v_fan_run_flag =0;
+	    run_cmd_flag=0;
+	}
+	else{
+		
+		PLASMA_CLOSE();
+	}
+	
 
 	if(g_pro.gMouse == 1){
 		
@@ -73,18 +83,41 @@ void mainboard_fun_handler(void)
 		mouse_close();
 	}
 
-	if(g_pro.gPlasma == 1){
+
+	if(g_pro.gMouse == 1 && g_pro.gDry == 0 && g_pro.gPlasma == 0 && run_cmd_flag !=1){
 		
-		PLASMA_OPEN();
+		mouse_open();
+		ac220v_fan_run_flag = 1;
+	    g_pro.gTimer_fan_run_one_minute=0;
 	}
-	else{
-		
-		PLASMA_CLOSE();
+	else if(g_pro.gMouse == 0 && g_pro.gDry == 0 && g_pro.gPlasma == 0 && run_cmd_flag !=1){
+        mouse_close();
+        
+	    ac220v_fan_run_flag =1;
+	    g_pro.gTimer_fan_run_one_minute=0;
+	    //FAN_CLOSE();
+
 	}
 
-     Fan_Full_Speed();
-	
-   	}
+
+	}
+	if(ac220v_fan_run_flag ==1){
+		
+		run_cmd_flag=1;
+
+	    if(g_pro.gTimer_fan_run_one_minute < 60){
+		    FAN_OPEN();
+
+        }
+		else{
+
+		    FAN_CLOSE();
+		    ac220v_fan_run_flag++;
+
+
+		}
+         
+	}
 	
    
 }
@@ -141,102 +174,15 @@ void mainboard_close_all_fun(void)
 
 /**********************************************************************
     *
-    *Functin Name: void works_run_two_hours_state(void)
+    *Functin Name: void works_run_eight_hours_state(void)
     *Function :  
     *Input Ref: NO
     *Return Ref: NO
     *
 ************************************************************************/
-void works_run_two_hours_state(void)
+void works_run_eight_hours_state(void)
 {
-   static uint8_t timer_fan_flag;
-
-   #if TEST_UNIT
-	if(g_pro.gTimer_two_hours_counter > 300 && g_pro.works_two_hours_interval_flag==0){ //five minutes 5x60=300s
-
-
-   #else 
-    if(g_pro.gTimer_two_hours_counter > 7200 ){ //two hours
-
-   #endif 
-    g_pro.delay_run_adc_counter=0;
-	g_pro.gTimer_two_hours_counter= 0;
- 
-    g_pro.works_two_hours_interval_flag=1;
-
-	PLASMA_CLOSE(); //
-	DRY_CLOSE();
-	mouse_close();
-    g_pro.gTimer_fan_run_one_minute=0;
-   
-
-	timer_fan_flag=1;
-
-   
-   }
-
-   switch(g_pro.works_two_hours_interval_flag){
-
-    case 1:
-
-   
-
-     #if TEST_UNIT 
-	 if(g_pro.gTimer_two_hours_counter  > 600){ //2minutes x 60s = 120s
-           
-         g_pro.gTimer_two_hours_counter =0;  
-		 g_pro.delay_run_adc_counter =0;
-         g_pro.works_two_hours_interval_flag=0;
-           
-     
-
-         mainboard_special_fun();
-            
-      }
-     #else 
-
-      if(g_pro.gTimer_two_hours_counter  > 600){ //10*60s=600s
-         g_pro.gTimer_two_hours_counter =0; 
-		 
-		 g_pro.delay_run_adc_counter=0;
-         g_pro.works_two_hours_interval_flag=0;
-         mainboard_special_fun();
-              
-      }
-
-
-      #endif 
-
-	 if(timer_fan_flag ==1){
-
-	      if(g_pro.gTimer_fan_run_one_minute < 60){
-	  
-	              Fan_Full_Speed();
-				  PLASMA_CLOSE(); //
-				  DRY_CLOSE();
-	              mouse_close();
-	        } 
-			else if(g_pro.gTimer_fan_run_one_minute > 59){
-	           
-			   g_pro.gTimer_fan_run_one_minute=0;
-			
-			  timer_fan_flag=0;
-             
-			   FAN_Stop();
-			   g_pro.delay_run_adc_counter=0;
-	       }
-
-	  }
-
-   
-    break;
-
-    case 0:
-
-	    mainboard_fun_handler();
-        
-    break;
-   }
+  
 
 }
 
@@ -244,7 +190,7 @@ void works_run_two_hours_state(void)
 
 /**********************************************************************
     *
-    *Functin Name: void works_run_two_hours_state(void)
+    *Functin Name: void works_run_eight_hours_state(void)
     *Function :  
     *Input Ref: NO
     *Return Ref: NO
@@ -273,7 +219,7 @@ void copy_cmd_hanlder(void)
 
 /**********************************************************************
     *
-    *Functin Name: void works_run_two_hours_state(void)
+    *Functin Name: void works_run_eight_hours_state(void)
     *Function :  
     *Input Ref: NO
     *Return Ref: NO
@@ -292,29 +238,10 @@ void copy_cmd_hanlder(void)
 void fault_handler(void)
 {
 
-    if(g_pro.fan_warning == 1){
-     
-	 
-	   DRY_CLOSE();
-	
-    
+  
 
-
-
-	}
-
-	if(g_pro.ptc_warning ==1){
-      
-	
-		 DRY_CLOSE();
-	 
-        
-	  
-		 
-
-
-	}
 
 
 }
+
 

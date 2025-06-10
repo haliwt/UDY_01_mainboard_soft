@@ -50,16 +50,6 @@ void power_onoff_handler(uint8_t data)
 	
 		power_on_run_handler();
        
-       if(gl_run.process_on_step !=0){ //logically rigorous
-
-	    if(g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
-		    
-	        
-
-			works_run_two_hours_state();
-	    }
-
-        }
 			
         break;
 
@@ -91,36 +81,27 @@ void power_on_init_ref(void)
 	g_pro.gMouse = 1;
 	g_pro.gTemp_value = 40;
 	//display time timing value 
-	g_pro.fan_warning =0 ;
-	g_pro.ptc_warning =0;
+	
 	g_pro.detect_fan_error_times=0;
 
 
-	g_pro.gdisp_hours_value =0;
-	g_pro.gdisp_timer_hours_value =0; //设置定时时间，
 
 
-	g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
-	
-
-	g_pro.gTimer_send_dht11_disp=5;
-
-	g_pro.gTimer_two_hours_counter = 0;
+    
+    g_pro.gTimer_timer_minutes_counter = 0;
+    g_pro.gTimer_timer_seconds_counter = 0;
 
 	gl_run.process_off_step=0;
 
  
-
-
-	g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
-
-	g_pro.gTimer_display_adc_value=0;
+    g_pro.gTimer_display_adc_value=0;
 	g_pro.delay_run_adc_counter=0;
 
 	DRY_OPEN();
 	mouse_open();
 
 	PLASMA_OPEN();
+	FAN_OPEN();
 
 
 
@@ -136,7 +117,7 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t switch_adc ;//switch_dht11;
+  
  
 	switch(gl_run.process_on_step){
 
@@ -145,65 +126,49 @@ void power_on_run_handler(void)
        gl_run.process_off_step =0 ; //clear power off process step .
 
 	  
-		 Update_DHT11_ToDisplayBoard_Value();
+		  Update_PtcADC_ToDisplayBoard_Value();
 			 
 		   
 		  power_on_init_ref();
 		
 		  
-		 
-	
-
-	   Update_DHT11_ToDisplayBoard_Value();
-         Fan_Full_Speed();
-	   gl_run.process_on_step =1;
+		
+	     gl_run.process_on_step =1;
 	 break;
 
 	 case 1:
 
      
-	      if(g_pro.gTimer_send_dht11_disp > 2){ //3s
-		       g_pro.gTimer_send_dht11_disp=0;
-	           Update_DHT11_ToDisplayBoard_Value();
-               
-		   
-		  }
-
-		  
-		  
-      
-	 
-        gl_run.process_on_step =2; 
-	  
-
-	 case 2: //WIFI link process
-	 
-        
-
-	    if(g_pro.gTimer_display_adc_value > 2 && g_pro.works_two_hours_interval_flag==0){
+	   
+      if(g_pro.gTimer_display_adc_value > 2 ){
 		 	g_pro.gTimer_display_adc_value=0;
 
-            switch_adc = switch_adc ^ 0x01;
-		    if(switch_adc==1){
-               Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
-			}
-			else{
-				
-				if(g_pro.delay_run_adc_counter < 3){
-					g_pro.delay_run_adc_counter++;
-					g_pro.fan_detect_voltage= 0xFEE;
-				  
-				}
-                else if(g_pro.works_two_hours_interval_flag==0){
-	                Get_Fan_Adc_Fun(ADC_CHANNEL_0,10);
+     
+           Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
 
-		        }
+		   Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
 
-            }
-		   }
+			 
+			 sendData_Real_Temp(g_pro.read_ntc_temperature_value);
+		   
+	         osDelay(5);
+			
+	  }
+
+	   gl_run.process_on_step =2;
+
+	 case 2:
+
+
+       mainboard_fun_handler();
+	  
 
       
-	  gl_run.process_on_step =1;
+	   gl_run.process_on_step =1;
+
+	 break;
+
+	 default:
 
 	 break;
 
@@ -236,18 +201,17 @@ void power_off_run_handler(void)
 
 
 	 
-	  SendData_Set_Command(CMD_POWER,close);
-	  osDelay(5);
+	 // SendData_Set_Command(CMD_POWER,close);
+	 // osDelay(5);
     
 	 
-        
+       mainboard_close_all_fun();
 
        gl_run.process_off_step = 1;
 
 
-	   g_pro.fan_warning =0 ;
-	   g_pro.ptc_warning =0;
-	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
+	 
+	
 	  
 
    break;
@@ -263,12 +227,12 @@ void power_off_run_handler(void)
 
 	     if(g_pro.gTimer_fan_run_one_minute  < 61){
 
-              Fan_Full_Speed();
+              FAN_OPEN();
 		 }
 		 else{
 
 		    fan_run_one_minute++;
-			FAN_Stop();
+			FAN_CLOSE();
 
 		 }
 

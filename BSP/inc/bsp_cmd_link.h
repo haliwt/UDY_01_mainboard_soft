@@ -28,6 +28,9 @@ extern uint8_t wifiInputBuf[1];
 
 void sendData_Real_TimeHum(uint8_t hum,uint8_t temp);
 
+void sendData_Real_Temp(uint8_t temp) ;
+
+
 
 void SendWifiData_To_PanelWindSpeed(uint8_t dat1);
 
@@ -47,6 +50,8 @@ void SendWifidata_Two_Data(uint8_t cmd,uint8_t datacmd);
 void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data);
 
 void SendData_Set_Command(uint8_t cmd,uint8_t data);
+
+
 
 
 #endif /* BSP_INC_BSP_CMD_LINK_H_ */

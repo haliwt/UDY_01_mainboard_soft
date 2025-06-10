@@ -67,10 +67,12 @@ void Error_Handler(void);
 #define SENSOR_GPIO_Port GPIOA
 #define ULTR_PWM_Pin GPIO_PIN_7
 #define ULTR_PWM_GPIO_Port GPIOA
-#define FAN_OUT2_Pin GPIO_PIN_0
-#define FAN_OUT2_GPIO_Port GPIOB
-#define FAN_OUT1_Pin GPIO_PIN_11
-#define FAN_OUT1_GPIO_Port GPIOA
+//FAN GPIO 
+#define FAN_OUT2_Pin 			GPIO_PIN_0
+#define FAN_OUT2_GPIO_Port 		GPIOB
+
+#define FAN_OUT1_Pin 				GPIO_PIN_11
+#define FAN_OUT1_GPIO_Port 			GPIOA
 
 /* USER CODE BEGIN Private defines */
 

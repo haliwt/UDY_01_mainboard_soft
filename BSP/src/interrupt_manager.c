@@ -17,7 +17,7 @@
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
    static  uint16_t tm0;
-
+ 
 
     if(htim->Instance==TIM17){ //timer number14 is 100ms.
        tm0++;
@@ -25,15 +25,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	   if(tm0> 999){ //1s
 	      tm0=0;
-	
+	       g_pro.gTimer_timer_seconds_counter++;
 			g_pro.gTimer_fan_run_one_minute++;
 		
-		   g_pro.gTimer_two_hours_counter++;
+		   g_pro.gTimer_timer_minutes_counter++;
 		 
 		   g_pro.gTimer_display_adc_value++;
 	
-		   g_pro.gTimer_send_dht11_disp++;
+	
 	       g_pro.gTimer_run_function_counter++;
+
+		   if( g_pro.gTimer_timer_seconds_counter > 59){
+			   g_pro.gTimer_timer_seconds_counter=0;
+		       g_pro.gTimer_timer_minutes_counter++;
+
+		   }
 		
 		 }
 	   

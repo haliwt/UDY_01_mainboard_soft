@@ -105,14 +105,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  //manual close flag :
 		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
 		   osDelay(5);
-		  if(g_pro.works_two_hours_interval_flag==0){
-		      DRY_OPEN();
-		  }
-
-	 	 
-        
-       
-       }
+		}
        }
        else if(pdata[4] == 0x0){
 	   	 if(g_pro.gpower_on == power_on){
@@ -147,9 +140,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.01.07
 		 osDelay(5);
 		 g_pro.gDry = 1;
-     	if(g_pro.works_two_hours_interval_flag==0){
-		  	DRY_OPEN();
-     	 }
+     
 
 	 	}
 	  }
@@ -174,10 +165,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	   	  
             buzzer_sound();
 			g_pro.gPlasma = 1;
+		    PLASMA_OPEN();
 		  
-		    if(g_pro.works_two_hours_interval_flag==0){
-                PLASMA_OPEN();
-		   }
 	
            
         }
@@ -204,11 +193,9 @@ void receive_data_from_displayboard(uint8_t *pdata)
           if(g_pro.gpower_on == power_on){ 
             buzzer_sound();
 			g_pro.gMouse = 1;
-		 
-		    if(g_pro.works_two_hours_interval_flag==0){
-                mouse_open();
-		   }
-	
+		     mouse_open();
+			 
+		  
            
           }
        }
@@ -389,9 +376,9 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			if(g_pro.gpower_on == power_on){ 
                 buzzer_sound();
 
-			g_pro.gdisp_timer_hours_value = pdata[5];
+
 			
-			g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode;//WT.EDIT 2025.04.23//input_temp_time_mode  ;
+		
            
 				
 
@@ -411,8 +398,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 			if(g_pro.gpower_on == power_on){ 
               
-			g_pro.gdisp_timer_hours_value = pdata[5];
-			g_pro.disp_timer_minutes_value=pdata[6];
+		
 		
 				
 
@@ -475,11 +461,8 @@ static void copy_receive_data(uint8_t cmd,uint8_t data)
 
 		   buzzer_sound();
 		   g_pro.gDry=1;
-		 
-		   if(g_pro.works_two_hours_interval_flag ==0){
-
-               DRY_OPEN();
-              }
+		   DRY_OPEN();
+		  
 
 		  }
 		  else{

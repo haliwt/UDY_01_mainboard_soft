@@ -1,7 +1,7 @@
 /*
  * bsp.h
  *
- *  Created on: 2025å¹´3æœˆ4æ—¥
+ *  Created on: 2025å¹?3æœ?4æ—?
  *      Author: Administrator
  */
 
@@ -113,14 +113,14 @@ typedef struct _process{
    uint8_t g_temperature_value;
    uint8_t detect_fan_error_times;
 
-    uint8_t temperature_decade;    // æ¸©
-    uint8_t temperature_unit;//åº¦å€¼
+    uint8_t temperature_decade;    // æ¸?
+    uint8_t temperature_unit;//åº¦å??
 	uint8_t read_ntc_temperature_value;
 
     
 
  
-   uint8_t adc_judge_flag;
+  volatile uint8_t adc_judge_flag;
 
    uint8_t gTemp_value;
    uint8_t gset_temperture_value;

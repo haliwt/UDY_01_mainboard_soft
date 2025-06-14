@@ -50,9 +50,9 @@ static TaskHandle_t xHandleTaskStart = NULL;
 
 
 
-///#define QUEUE_LENGTH            1                   /* 队列支持的消息个数 */
+///#define QUEUE_LENGTH            1                   /* 队列支持的消息个�? */
 ///#define QUEUE_ITEM_SIZE         sizeof(uint32_t)    /* 队列中每条消息的大小 */
-//#define SEMAPHORE_BINARY_LENGTH 1                   /* 二值信号量的有效长度 */
+//#define SEMAPHORE_BINARY_LENGTH 1                   /* 二�?�信号量的有效长�? */
 //#define QUEUESET_LENGTH         ((2 * QUEUE_LENGTH) + SEMAPHORE_BINARY_LENGTH)  /* 队列集支持的消息个数 */
 
 
@@ -86,7 +86,7 @@ void freeRTOS_Handler(void)
 	  /* 创建任务通信机制 */
 	//  AppObjCreate();
 
-	  /* 启动调度，开始执行任劄1�7 */
+	  /* 启动调度，开始执行任�?1�?7 */
 	   vTaskStartScheduler();
 }
 
@@ -95,18 +95,17 @@ void freeRTOS_Handler(void)
 *	Function:
 *	Input Ref: pvParameters 是在创建该任务时传��的形参
 *	Return Ref:
-*   priority: 1  (数值越小优先级越低，这个跟uCOS相反)
+*   priority: 1  (数�?�越小优先级越低，这个跟uCOS相反)
 **********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters)
 {
-
+ 
   while(1){
     
-	
-   
+
 	power_onoff_handler(g_pro.gpower_on);
 
-	vTaskDelay(10);
+    vTaskDelay(10);
 
 	  
     }
@@ -118,15 +117,15 @@ static void vTaskRunPro(void *pvParameters)
 *
 *	Function Name: vTaskStart
 *	Function:
-*	Input Ref: pvParameters 是在创建该任务时传递的形参
+*	Input Ref: pvParameters 是在创建该任务时传�?�的形参
 *	Return Ref:
-*	priority: 3  (数值越小优先级越低，这个跟uCOS相反)
+*	priority: 3  (数�?�越小优先级越低，这个跟uCOS相反)
 *
 **********************************************************************************************************/
 static void vTaskStart(void *pvParameters)
 {
 	BaseType_t xResult;
-    //const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置最大等待时间为30ms */
+    //const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置�?大等待时间为30ms */
 	uint32_t ulValue;
    
 
@@ -135,11 +134,11 @@ static void vTaskStart(void *pvParameters)
 
       xResult = xTaskNotifyWait(0x00000000,
 						           0xFFFFFFFF,
-						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-								  portMAX_DELAY);  /* portMAX_DELAY  最大允许延迟时间 */
+						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue�? */
+								  portMAX_DELAY);  /* portMAX_DELAY  �?大允许延迟时�? */
     if( xResult == pdPASS )
 	{
-			/* 接收到消息，检测那个位被按下 */
+			/* 接收到消息，�?测那个位被按�? */
 
 		if((ulValue & DECODER_BIT_9) != 0){
   
@@ -168,17 +167,17 @@ void AppTaskCreate (void)
 {
 
 	xTaskCreate( vTaskRunPro,    		/* 任务函数  */
-                 "vTaskRunPro",  		/* 任务各1�7    */
+                 "vTaskRunPro",  		/* 任务�?1�?7    */
                  128,         		/* stack大小，单位word，也就是4字节 */
                  NULL,        		/* 任务参数  */
-                 1,           		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
+                 1,           		/* 任务优先�?1�?7 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskRunPro); /* 任务句柄  */
 
 	xTaskCreate( vTaskStart,     		/* 任务函数  */
-                 "vTaskStart",   		/* 任务各1�7    */
+                 "vTaskStart",   		/* 任务�?1�?7    */
                  128,            		/* 任务栈大小，单位word，也就是4字节 */
                  NULL,           		/* 任务参数  */
-                 2,              		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
+                 2,              		/* 任务优先�?1�?7 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskStart );   /* 任务句柄  */
 }
 
@@ -243,10 +242,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                 #if 1
                 xTaskNotifyFromISR(xHandleTaskStart,  /* 目标任务 */
                                     DECODER_BIT_9,     /* 设置目标任务事件标志位bit0  */
-                                    eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */
+                                    eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志�? */
                                     &xHigherPriorityTaskWoken);
 
-                /* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
+                /* 如果xHigherPriorityTaskWoken = pdTRUE，那么�??出中断后切到当前�?高优先级任务执行 */
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 				#endif 
 

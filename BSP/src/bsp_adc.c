@@ -31,7 +31,7 @@ static void Judge_Fan_State(uint16_t adc_value);
 	ADC_ChannelConfTypeDef ADC1_ChanConf;
 
 	ADC1_ChanConf.Channel=ch;                                   //Í¨µÀ
-    ADC1_ChanConf.Rank= ADC_REGULAR_RANK_1;                                    //第一个序列
+    ADC1_ChanConf.Rank= ADC_REGULAR_RANK_1;                                    //第一个序�?
     ADC1_ChanConf.SamplingTime=ADC_SAMPLETIME_1CYCLE_5;//ADC_SAMPLETIME_239CYCLES_5;      //²ÉÑùÊ±¼ä               
 
 
@@ -199,15 +199,15 @@ static void Judge_Fan_State(uint16_t adc_value)
 void Update_PtcADC_ToDisplayBoard_Value(void)
 {
 
-    static uint8_t power_on_first;
+    static uint8_t power_on_first,copy_temperature_value;
 
 	if(power_on_first ==0){
-	    power_on_first++
+	    power_on_first++;
 	    g_pro.adc_judge_flag = Get_Adc_Channel(ADC_CHANNEL_1) ;
 
 	}
 
-	if(g_pro.adc_judge_flag==HAL_OK){
+	if(g_pro.adc_judge_flag !=HAL_TIMEOUT){
 
 		Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
 
@@ -216,11 +216,14 @@ void Update_PtcADC_ToDisplayBoard_Value(void)
 		sendData_Real_Temp(g_pro.read_ntc_temperature_value);
 			   
 		osDelay(5);
+		copy_temperature_value= g_pro.read_ntc_temperature_value;
 
 	}
 	else if(g_pro.adc_judge_flag==HAL_TIMEOUT){
 
 	    power_on_first=0;
+		sendData_Real_Temp(copy_temperature_value);
+		osDelay(5);
 
 	}
    

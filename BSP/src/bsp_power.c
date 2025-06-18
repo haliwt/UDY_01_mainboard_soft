@@ -1,7 +1,7 @@
 /*
  * bsp_power.c
  *
- *  Created on: 2025å¹´3æœˆ4æ—¥
+ *  Created on: 2025å¹?3æœ?4æ—?
  *      Author: Administrator
  */
 #include "bsp.h"
@@ -92,6 +92,8 @@ void power_on_init_ref(void)
  
     g_pro.gTimer_display_adc_value=0;
 	g_pro.delay_run_adc_counter=0;
+	g_pro.power_on_read_ntc_flag = 0;
+	g_pro.gTimer_display_adc_value =0;
 
 	DRY_OPEN();
 	mouse_open();
@@ -121,12 +123,11 @@ void power_on_run_handler(void)
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
 
-	  
-		  Update_PtcADC_ToDisplayBoard_Value();
+	      //Update_PtcADC_ToDisplayBoard_Value();
 			 
 		   
 		  power_on_init_ref();
-		
+		  read_ntc_value_init();
 		  
 		
 	     gl_run.process_on_step =1;
@@ -134,9 +135,14 @@ void power_on_run_handler(void)
 
 	 case 1:
 
-     
-	   
-      if(g_pro.gTimer_display_adc_value > 2 ){
+      if(g_pro.power_on_read_ntc_flag ==0 && g_pro.gTimer_display_adc_value < 10){
+	      g_pro.power_on_read_ntc_flag++;
+
+	       read_ntc_value_init();
+
+
+	  }
+	  else if(g_pro.gTimer_display_adc_value > 2  && g_pro.power_on_read_ntc_flag==1){
 		 	g_pro.gTimer_display_adc_value=0;
 
            Update_PtcADC_ToDisplayBoard_Value();

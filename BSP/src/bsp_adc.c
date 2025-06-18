@@ -32,7 +32,7 @@ static void Judge_Fan_State(uint16_t adc_value);
 
 	ADC1_ChanConf.Channel=ch;                                   //Í¨µÀ
     ADC1_ChanConf.Rank= ADC_REGULAR_RANK_1;                                    //第一个序�?
-    ADC1_ChanConf.SamplingTime=ADC_SAMPLETIME_1CYCLE_5;//ADC_SAMPLETIME_239CYCLES_5;      //²ÉÑùÊ±¼ä               
+    ADC1_ChanConf.SamplingTime=ADC_SAMPLETIME_19CYCLES_5;   //²ÉÑùÊ±¼ä               
 
 
 	HAL_ADC_ConfigChannel(&hadc1,&ADC1_ChanConf);        //Í¨µÀÅäÖÃ
@@ -80,11 +80,12 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 	uint16_t adcx;
 	
 	adcx = Get_Adc_Average(channel,times);
-	
+
+	osDelay(10);
 
     g_pro.read_ptc_voltage  =(uint16_t)((adcx * 3300)/4096); //amplification 100 ,3.11V -> 311
 
-	
+	osDelay(10);
 
     g_pro.read_ptc_voltage = g_pro.read_ptc_voltage-100;
 
@@ -194,6 +195,43 @@ static void Judge_Fan_State(uint16_t adc_value)
 }
 
 #endif 
+
+
+void read_ntc_value_init(void)
+{
+    static uint8_t power_on_first,copy_temperature_value;
+
+	if(power_on_first ==0){
+	    power_on_first++;
+	    g_pro.adc_judge_flag = Get_Adc_Channel(ADC_CHANNEL_1) ;
+
+	}
+
+	if(g_pro.adc_judge_flag !=HAL_TIMEOUT){
+
+		Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,1);
+
+	    Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
+
+		sendData_Real_Temp(g_pro.read_ntc_tem_value);
+			   
+		osDelay(5);
+		copy_temperature_value= g_pro.read_ntc_tem_value;
+
+	}
+	else if(g_pro.adc_judge_flag==HAL_TIMEOUT){
+
+	    power_on_first=0;
+		sendData_Real_Temp(copy_temperature_value);
+		osDelay(5);
+
+	}
+   
+
+
+
+
+}
 
 
 void Update_PtcADC_ToDisplayBoard_Value(void)

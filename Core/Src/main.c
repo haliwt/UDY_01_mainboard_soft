@@ -7,8 +7,8 @@
   * @attention
   *
   * UDY_01 Version : 01 .DATA.2025.0610
-  * 
-  *
+  *    version:011,modify power on read NTC temperature value is zero is bug .
+  *    DATA.2025.06.18
   * 
   * 
   * 

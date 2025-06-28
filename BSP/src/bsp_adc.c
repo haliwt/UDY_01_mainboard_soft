@@ -5,7 +5,12 @@
 
 #define TOLERANCE_ERROR      100
 
+__IO uint16_t ADC_ConvertedValue = 0;
 
+
+
+
+#if 0
 
 static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
 
@@ -269,4 +274,74 @@ void Update_PtcADC_ToDisplayBoard_Value(void)
 	
 }
 
+#endif 
+/**
+  * @brief  转换完成中断回调函数（非阻塞模式）
+  * @param  AdcHandle : ADC句柄
+  * @retval 无
+  */
+
+uint16_t ADC_GetValue(void)
+{
+    uint16_t ADC_vol;
+/* ADC的采样值 / ADC精度 = 电压值 / 3.3 */
+   ADC_vol = (ADC_ConvertedValue*3300/4096); //3.3v*1000= 3300v,2^12 = 4096
+   osDelay(100);
+   return ADC_vol;
+
+
+}
+
+/**
+  * @brief  转换完成中断回调函数（非阻塞模式）
+  * @param  send data to display board ADC value
+  * @retval 无
+  */
+
+void Update_PtcADC_ToDisplayBoard_Value(void)
+{
+
+    static uint8_t power_on_first,copy_temperature_value;
+
+	if(power_on_first ==0){
+	    power_on_first++;
+	    g_pro.adc_judge_flag = ADC_ConvertedValue;
+	   
+
+	}
+
+	if(g_pro.adc_judge_flag !=HAL_TIMEOUT){
+
+	   g_pro.read_ptc_voltage =  ADC_GetValue();
+
+	    Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
+
+		sendData_Real_Temp(g_pro.read_ntc_temperature_value);
+			   
+		osDelay(5);
+		copy_temperature_value= g_pro.read_ntc_temperature_value;
+
+	}
+	else if(g_pro.adc_judge_flag==HAL_TIMEOUT){
+
+	    power_on_first=0;
+		sendData_Real_Temp(copy_temperature_value);
+		osDelay(5);
+
+	}
+   
+		   
+	
+}
+
+/**
+  * @brief  转换完成中断回调函数（非阻塞模式）
+  * @param  AdcHandle : ADC句柄
+  * @retval 无
+  */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+{
+  /* 获取结果 */
+    ADC_ConvertedValue = HAL_ADC_GetValue(&hadc1); 
+}
 

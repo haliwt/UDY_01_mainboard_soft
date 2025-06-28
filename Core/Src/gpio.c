@@ -50,16 +50,16 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, RELAY_CTL_Pin|FAN_OUT2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, FAN_OUT2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(PLASMA_CTL_GPIO_Port, PLASMA_CTL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SENSOR_Pin|FAN_OUT1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, RELAY_CTL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : RELAY_CTL_Pin FAN_OUT2_Pin */
-  GPIO_InitStruct.Pin = RELAY_CTL_Pin|FAN_OUT2_Pin;
+  GPIO_InitStruct.Pin = FAN_OUT2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -73,7 +73,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(PLASMA_CTL_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : SENSOR_Pin FAN_OUT1_Pin */
-  GPIO_InitStruct.Pin = SENSOR_Pin|FAN_OUT1_Pin;
+  GPIO_InitStruct.Pin = RELAY_CTL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

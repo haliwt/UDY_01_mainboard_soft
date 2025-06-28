@@ -2,7 +2,6 @@
 #define __BSP_MOUSE_H
 #include "main.h"
 
-
 #define DRY_OPEN()    do{RELAY_CTL_GPIO_Port->BSRR |= RELAY_CTL_Pin;}while(0)
 #define DRY_CLOSE()   do{RELAY_CTL_GPIO_Port->BSRR |=(uint32_t)RELAY_CTL_Pin<<16;}while(0)
 

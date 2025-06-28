@@ -50,4 +50,3 @@ void MX_ADC1_Init(void);
 
 #endif /* __ADC_H__ */
 
-

@@ -221,7 +221,6 @@ uint16_t adcx,temp_vlue;
 	*Return Ref: No
 	*
 *****************************************************************/
-#if 0
 static uint16_t Get_Adc_Channel(uint32_t ch)   
 {
 
@@ -246,7 +245,6 @@ static uint16_t Get_Adc_Channel(uint32_t ch)
  
 	
 }
-#endif 
 /*****************************************************************
 *
 	*Function Name: static uint16_t Get_Adc(uint32_t ch)  

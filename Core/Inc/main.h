@@ -75,8 +75,6 @@ void Error_Handler(void);
 #define FAN_OUT2_Pin 			GPIO_PIN_0
 #define FAN_OUT2_GPIO_Port 		GPIOB
 
-//#define FAN_OUT1_Pin 				GPIO_PIN_11
-//#define FAN_OUT1_GPIO_Port 			GPIOA
 
 /* USER CODE BEGIN Private defines */
 

@@ -32,7 +32,6 @@
 #include "bsp_cmd_link.h"
 
 #include "bsp_adc.h"
-
 #include "interrupt_manager.h"
 
 

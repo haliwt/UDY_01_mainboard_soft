@@ -246,7 +246,7 @@ static uint16_t Get_Adc_Channel(uint32_t ch)
 	
 }
 /*****************************************************************
-*
+	*
 	*Function Name: static uint16_t Get_Adc(uint32_t ch)  
 	*Function ADC input channel be selected "which one channe"
 	*Input Ref: which one ? AC_Channel_?
@@ -255,7 +255,7 @@ static uint16_t Get_Adc_Channel(uint32_t ch)
 *****************************************************************/
 void Get_Ntc_Resistance_Temperature_Handler(uint16_t voltage)
 {
-    static uint8_t read_adc_value;
+   // static uint8_t read_adc_value;
 
 
     ntc_t.ntc_res_read_adc_value = voltage ;
@@ -268,15 +268,38 @@ void Get_Ntc_Resistance_Temperature_Handler(uint16_t voltage)
     
 	Calculate_Speicial_Temperature_Value(disp_temp_degree);
     
-   
-     
-     g_pro.read_ntc_temperature_value = ntc_res_linear_value(g_pro.read_ntc_tem_value);
+    g_pro.read_ntc_temperature_value = ntc_res_linear_value(g_pro.read_ntc_tem_value);
 
-     
-	 
+   }
+/*****************************************************************
+	*
+	*Function Name: void getNtc_temperatureValue_init(uint16_t voltage)
+	*Function :
+	*Input Ref: NO
+	*Return Ref: No
+	*
+*****************************************************************/
+void getNtc_temperatureValue_init(uint16_t voltage)
+{
+   // static uint8_t read_adc_value;
 
+
+    ntc_t.ntc_res_read_adc_value = voltage ;
+
+    temp_vlue= voltage /100;
+	
+	length_simple =  sizeof(R10K_Init_0_120_simple)/sizeof(R10K_Init_0_120_simple[0]);
     
-}
+   	 disp_temp_degree = Binary_Search(R10K_Init_0_120_simple,temp_vlue,length_simple);
+    
+	Calculate_Speicial_Temperature_Value(disp_temp_degree);
+    
+    g_pro.read_ntc_temperature_value = g_pro.read_ntc_tem_value;
+     
+    // g_pro.read_ntc_temperature_value = ntc_res_linear_value(g_pro.read_ntc_tem_value);
+
+ }
+
 /*************************************************************************
 	*
 	*Functin Name: static int8_t  Binary_Search(uint8_t *R10K_NTC_81 ,uint8_t key)
@@ -334,6 +357,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
            // zero_d =2;
           array_subscript =  Calculate_Display_Temperature_Value(R10K_0_1,0,ntc_t.ntc_res_read_adc_value,2);
+		 if(array_subscript > 1)array_subscript=1;
 
          switch(array_subscript){
 
@@ -356,6 +380,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
 		// zero_d =2;
 		array_subscript =  Calculate_Display_Temperature_Value(R10K_2_4,1,ntc_t.ntc_res_read_adc_value,3);
+		if(array_subscript > 2)array_subscript=2;
 
 		switch(array_subscript){
 
@@ -382,6 +407,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
 			// zero_d =2;
 			array_subscript =  Calculate_Display_Temperature_Value(R10K_5_7,2,ntc_t.ntc_res_read_adc_value,3);
+			if(array_subscript > 2)array_subscript=2;
 
 			switch(array_subscript){
 
@@ -408,6 +434,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
 		// zero_d =2;
 		array_subscript =  Calculate_Display_Temperature_Value(R10K_8_11,3,ntc_t.ntc_res_read_adc_value,4);
+		if(array_subscript > 3)array_subscript=3;
 
 		switch(array_subscript){
 
@@ -439,7 +466,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
 			// zero_d =2;
 			array_subscript =  Calculate_Display_Temperature_Value(R10K_12_14,4,ntc_t.ntc_res_read_adc_value,3);
-
+			if(array_subscript > 2)array_subscript=2;
 			switch(array_subscript){
 
 				case 0:
@@ -466,6 +493,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
 		// zero_d =2;
 		array_subscript =  Calculate_Display_Temperature_Value(R10K_15_17,5,ntc_t.ntc_res_read_adc_value,3);
+		if(array_subscript > 2)array_subscript=2;
 
 		switch(array_subscript){
 
@@ -494,7 +522,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
          // zero_d =2;
         array_subscript =  Calculate_Display_Temperature_Value(R10K_18_20,6,ntc_t.ntc_res_read_adc_value,3);
-      
+        if(array_subscript > 2)array_subscript=2;
        switch(array_subscript){
 
        case 0:
@@ -521,7 +549,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
          // zero_d =2;
         array_subscript =  Calculate_Display_Temperature_Value(R10K_21_23,7,ntc_t.ntc_res_read_adc_value,3);
-      
+       if(array_subscript > 2)array_subscript=2;
        switch(array_subscript){
 
 		 case 0:
@@ -546,7 +574,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
    case degree_eight: //24~26 degree
    	   array_subscript =  Calculate_Display_Temperature_Value(R10K_24_26,8,ntc_t.ntc_res_read_adc_value,3);
-	   
+	   if(array_subscript > 2)array_subscript=2;
 	   switch(array_subscript){
 
 		 case 0:
@@ -575,7 +603,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
          array_subscript =  Calculate_Display_Temperature_Value(R10K_27_30,9,ntc_t.ntc_res_read_adc_value,4);
 		 // HAL_Delay(5);
-  		
+  		  if(array_subscript > 3)array_subscript=3;
 		 switch(array_subscript){
    
 		   case 0:
@@ -607,7 +635,8 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_ten: //31~~33 degree
 
          array_subscript =  Calculate_Display_Temperature_Value(R10K_31_33,10,ntc_t.ntc_res_read_adc_value,3);
-			// HAL_Delay(5);
+		 //HAL_Delay(5);
+		 if(array_subscript > 2)array_subscript=2;
 		 switch(array_subscript){
    
 		   case 0:
@@ -632,7 +661,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
    case degree_eleven : //34 À~~37 degree
 		 array_subscript =  Calculate_Display_Temperature_Value(R10K_34_37,11,ntc_t.ntc_res_read_adc_value,4);
-		
+		 if(array_subscript > 3)array_subscript=3;
 		 switch(array_subscript){
    
 		   case 0:
@@ -661,6 +690,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_twelve: //38 ```41 degree
    	     array_subscript =  Calculate_Display_Temperature_Value(R10K_38_41,12,ntc_t.ntc_res_read_adc_value,4);
 		 // HAL_Delay(5);
+		  if(array_subscript > 3)array_subscript=3;
 		 switch(array_subscript){
    
 		   case 0:
@@ -690,6 +720,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_thirteen ://42 ````44 degree
    	     array_subscript =  Calculate_Display_Temperature_Value(R10K_42_44,13,ntc_t.ntc_res_read_adc_value,3);
 		  
+		 if(array_subscript > 2)array_subscript=2;
 
 		 switch(array_subscript){
    
@@ -703,7 +734,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    
 		   break;
 
-		    case 3:
+		    case 2:
 			  g_pro.read_ntc_tem_value = 44 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
    
 		   break;
@@ -717,6 +748,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_fourteen : //45````49 degree
    	     array_subscript =  Calculate_Display_Temperature_Value(R10K_45_49,14,ntc_t.ntc_res_read_adc_value,5);
 		  //HAL_Delay(5);
+		 if(array_subscript > 4)array_subscript=4;
 		 switch(array_subscript){
    
 		   case 0:
@@ -752,6 +784,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_fiveteen :  //50````53 degree
    	    array_subscript =  Calculate_Display_Temperature_Value(R10K_50_53,15,ntc_t.ntc_res_read_adc_value,4);
 		  //HAL_Delay(5);
+		 if(array_subscript > 3)array_subscript=3;
 		 switch(array_subscript){
    
 		   case 0:
@@ -781,6 +814,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_sixteen : //54````58 degree
    	 array_subscript =  Calculate_Display_Temperature_Value(R10K_54_58,16,ntc_t.ntc_res_read_adc_value,5);
 	     // HAL_Delay(5);
+	      if(array_subscript > 4)array_subscript=4;
 		 switch(array_subscript){
    
 		   case 0:
@@ -815,6 +849,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case  degree_seventeen ://59````64 degree
    		 array_subscript =  Calculate_Display_Temperature_Value(R10K_59_64,17,ntc_t.ntc_res_read_adc_value,6);
 		 // HAL_Delay(5);
+		  if(array_subscript > 5)array_subscript=5;
 		 switch(array_subscript){
    
 		   case 0:
@@ -853,7 +888,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    
    case degree_eighteen : //65````71 degree
    	   	 array_subscript =  Calculate_Display_Temperature_Value(R10K_65_71,18,ntc_t.ntc_res_read_adc_value,7);
-	
+	      if(array_subscript > 6)array_subscript=6;
 		 switch(array_subscript){
    
 		   case 0:
@@ -900,6 +935,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_nineteen : //72````78 degree
    		 array_subscript =  Calculate_Display_Temperature_Value(R10K_72_78,19,ntc_t.ntc_res_read_adc_value,7);
 		//  HAL_Delay(5);
+		 if(array_subscript > 6)array_subscript=6;
 		 switch(array_subscript){
    
 		   case 0:
@@ -944,6 +980,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_twenty : //79~85 degree
        array_subscript =  Calculate_Display_Temperature_Value(R10K_79_88,20,ntc_t.ntc_res_read_adc_value,10);
 	     //  HAL_Delay(5);
+	      if(array_subscript > 9)array_subscript=9;
 		 switch(array_subscript){
    
 		   case 0:
@@ -1004,6 +1041,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_twenty_one : //89~100 degree
        array_subscript =  Calculate_Display_Temperature_Value(R10K_89_100,21,ntc_t.ntc_res_read_adc_value,12);
 	     //  HAL_Delay(5);
+	      if(array_subscript > 11)array_subscript=11;
 		 switch(array_subscript){
    
 		   case 0:
@@ -1074,6 +1112,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    case degree_twenty_two : //101~118 degree
        array_subscript =  Calculate_Display_Temperature_Value(R10K_101_118,22,ntc_t.ntc_res_read_adc_value,18);
 	     //  HAL_Delay(5);
+	      if(array_subscript > 17)array_subscript=17;
 		 switch(array_subscript){
    
 		   case 0:
@@ -1175,7 +1214,7 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
     case degree_twenty_three: //119````120 degree
    	   	 array_subscript =  Calculate_Display_Temperature_Value(R10K_119_120,23,ntc_t.ntc_res_read_adc_value,2);
-	
+	     if(array_subscript > 1)array_subscript=1;
 		 switch(array_subscript){
    
 		   case 0:
@@ -1216,7 +1255,7 @@ static uint8_t Calculate_Display_Temperature_Value(const uint16_t *pt,uint8_t ke
      else if(*(pt+i) >  ntc_res_value && (*(pt+i+1) <ntc_res_value)){//high temperature degree is number is smaller
 
               
-                 
+               if(i> length) i = length; 
                return i;
 				 
           

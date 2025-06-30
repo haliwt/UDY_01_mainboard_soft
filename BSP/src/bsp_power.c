@@ -136,13 +136,16 @@ void power_on_run_handler(void)
 	 case 1:
 
       if(g_pro.power_on_read_ntc_flag ==0 && g_pro.gTimer_display_adc_value < 10){
-	      g_pro.power_on_read_ntc_flag++;
 
-	       read_ntc_value_init();
+          read_ntc_value_init();
 
 
 	  }
-	  else if(g_pro.gTimer_display_adc_value > 2  && g_pro.power_on_read_ntc_flag==1){
+	  else if(g_pro.power_on_read_ntc_flag ==0 && g_pro.gTimer_display_adc_value > 9){
+           g_pro.gTimer_display_adc_value=0;
+	       g_pro.power_on_read_ntc_flag=1;
+	  }
+	  else if(g_pro.gTimer_display_adc_value > 4  && g_pro.power_on_read_ntc_flag==1){
 		 	g_pro.gTimer_display_adc_value=0;
 
            Update_PtcADC_ToDisplayBoard_Value();

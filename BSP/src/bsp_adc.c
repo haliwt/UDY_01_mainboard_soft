@@ -120,7 +120,7 @@ void read_ntc_value_init(void)
 
 	if(g_pro.adc_judge_flag !=HAL_TIMEOUT){
 
-		Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,1);
+		Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
 
 	    //Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
 	    getNtc_temperatureValue_init(g_pro.read_ptc_voltage);

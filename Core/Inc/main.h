@@ -29,6 +29,20 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
+#include "stm32g0xx_ll_adc.h"
+#include "stm32g0xx_ll_dma.h"
+#include "stm32g0xx_ll_iwdg.h"
+#include "stm32g0xx_ll_rcc.h"
+#include "stm32g0xx_ll_bus.h"
+#include "stm32g0xx_ll_system.h"
+#include "stm32g0xx_ll_exti.h"
+#include "stm32g0xx_ll_cortex.h"
+#include "stm32g0xx_ll_utils.h"
+#include "stm32g0xx_ll_pwr.h"
+#include "stm32g0xx_ll_tim.h"
+#include "stm32g0xx_ll_usart.h"
+#include "stm32g0xx_ll_gpio.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -57,24 +71,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define RELAY_CTL_Pin 				GPIO_PIN_5//GPIO_PIN_7
-#define RELAY_CTL_GPIO_Port 		GPIOA//GPIOB
-
-#define PLASMA_CTL_Pin 					GPIO_PIN_15
-#define PLASMA_CTL_GPIO_Port 			GPIOC
-
-#define BUZZER_PWM_Pin GPIO_PIN_4
+#define RELAY_CTL_Pin LL_GPIO_PIN_7
+#define RELAY_CTL_GPIO_Port GPIOB
+#define PLASMA_CTL_Pin LL_GPIO_PIN_15
+#define PLASMA_CTL_GPIO_Port GPIOC
+#define BUZZER_PWM_Pin LL_GPIO_PIN_4
 #define BUZZER_PWM_GPIO_Port GPIOA
-
-//#define SENSOR_Pin GPIO_PIN_5
-//#define SENSOR_GPIO_Port GPIOA
-
-#define ULTR_PWM_Pin GPIO_PIN_7
+#define SENSOR_Pin LL_GPIO_PIN_5
+#define SENSOR_GPIO_Port GPIOA
+#define ULTR_PWM_Pin LL_GPIO_PIN_7
 #define ULTR_PWM_GPIO_Port GPIOA
-//FAN GPIO 
-#define FAN_OUT2_Pin 			GPIO_PIN_0
-#define FAN_OUT2_GPIO_Port 		GPIOB
-
+#define FAN_OUT2_Pin LL_GPIO_PIN_0
+#define FAN_OUT2_GPIO_Port GPIOB
+#define FAN_OUT1_Pin LL_GPIO_PIN_11
+#define FAN_OUT1_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

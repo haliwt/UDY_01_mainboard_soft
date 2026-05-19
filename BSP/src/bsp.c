@@ -5,9 +5,11 @@
  *      Author: Administrator
  */
 #include "bsp.h"
+#include "bsp_adc.h"
 
 
 process_t g_pro;
+display_t g_disp;
 
  uint16_t mainboard_time;
 
@@ -23,11 +25,10 @@ process_t g_pro;
 ******************************************************************************/
 void bsp_init(void)
 {
-	
-	
-	 
-
+	// 初始化 ADC DMA
+	bsp_adc_dma_init();
 }
+
 
 /******************************************************************************
 	*
@@ -202,7 +203,7 @@ void copy_cmd_hanlder(void)
 		
 	   
 	    SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-			osDelay(5);
+			tx_thread_sleep(5);
       g_pro.g_copy_power_onoff_flag =0xff;
 
 	}
@@ -210,7 +211,7 @@ void copy_cmd_hanlder(void)
 
 	  g_pro.g_copy_power_onoff_flag =0xfe;
 	  SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07 
-        osDelay(5);
+        tx_thread_sleep(5);
 
 	}
 

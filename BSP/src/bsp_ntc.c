@@ -113,7 +113,7 @@ int8_t left_point =0;
 int8_t right_point ;
 ////int8_t length = sizeof(R10K_Init_20_96_simple)/(sizeof(R10K_Init_20_96_simple[0]));
 int8_t mid_value;
-//拆分�???23个数组，mid =11
+//拆分�???23个数组，mid =11
 //static const uint16_t R10K_0_0[2]={2558,2528};
 //static const uint16_t R10K_1_4[4]={2497,2466,2434,2402};
 
@@ -148,11 +148,11 @@ static const uint16_t R10K_42_44[3]={1175,1149,1124};  //array[7]=error range = 
 
 static const uint16_t R10K_45_49[5]={1099,1075,1051,1028,1005}; //array[8]=error range = 24
 
-static const uint16_t R10K_50_53[4]={982,960,938,917};  //array[9]�??? error range = 21
+static const uint16_t R10K_50_53[4]={982,960,938,917};  //array[9]�??? error range = 21
 static const uint16_t R10K_54_58[5]={896,875,855,835,816}; //array[10]：error range = 19
 
 static const uint16_t R10K_59_64[6]={797,779,760,743,725,708};  //array[11]：error range = 16
-static const uint16_t R10K_65_71[7]={692,675,660,644,629,614,600};  //array[12]�??? error range = 14 
+static const uint16_t R10K_65_71[7]={692,675,660,644,629,614,600};  //array[12]�??? error range = 14 
 
 static const uint16_t R10K_72_78[7]={585,572,558,545,532,520,507}; //array[13]:error range = 12
 
@@ -194,8 +194,6 @@ static const uint8_t R10K_Init_0_81_simple[23]={
 
 
 
-static uint16_t Get_Adc_Channel(uint32_t ch) ;
-
 static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
 
 
@@ -213,38 +211,7 @@ uint16_t adcx,temp_vlue;
 
 
 
-/*****************************************************************
-*
-	*Function Name: static uint16_t Get_Adc(uint32_t ch)  
-	*Function ADC input channel be selected "which one channe"
-	*Input Ref: which one ? AC_Channel_?
-	*Return Ref: No
-	*
-*****************************************************************/
-static uint16_t Get_Adc_Channel(uint32_t ch)   
-{
 
-    static uint8_t adc_result;
-	ADC_ChannelConfTypeDef ADC1_ChanConf;
-
-	ADC1_ChanConf.Channel=ch;                                   //Í¨µÀ
-    ADC1_ChanConf.Rank=  ADC_REGULAR_RANK_1;                                    //第一个序�???
-    ADC1_ChanConf.SamplingTime= ADC_SAMPLETIME_1CYCLE_5;//ADC_SAMPLETIME_239CYCLES_5;      //²ÉÑùÊ±¼ä               
-
-
-	HAL_ADC_ConfigChannel(&hadc1,&ADC1_ChanConf);        //Í¨µÀÅäÖÃ
-	
-    HAL_ADC_Start(&hadc1);                               //start ADC transmit
-	
-    adc_result = HAL_ADC_PollForConversion(&hadc1,10);                //轮询转换
- 
-    if(adc_result == HAL_OK)
-		return (uint16_t)HAL_ADC_GetValue(&hadc1);	        	//·µ»Ø×î½üÒ»´ÎADC1¹æÔò×éµÄ×ª»»½á¹û 
-    else 
-		return HAL_TIMEOUT;
- 
-	
-}
 /*****************************************************************
 	*
 	*Function Name: static uint16_t Get_Adc(uint32_t ch)  
@@ -1311,7 +1278,7 @@ uint8_t ntc_res_linear_value(uint8_t ntc_value)
         	 // read_input_times =1;
 
               //display_ntc_temp_value(disp_ntc_value[0]);
-              HAL_Delay(5);//osDelay(50);//HAL_Delay(400);
+              HAL_Delay(5);//tx_thread_sleep(50);//HAL_Delay(400);
 
         	  return  disp_ntc_value[0]  ;
 
@@ -1325,7 +1292,7 @@ uint8_t ntc_res_linear_value(uint8_t ntc_value)
           // read_input_times =1;
 
              //display_ntc_temp_value(disp_ntc_value[1]);
-              HAL_Delay(5);//osDelay(50);//HAL_Delay(400);
+              HAL_Delay(5);//tx_thread_sleep(50);//HAL_Delay(400);
 
            return disp_ntc_value[1];
 
@@ -1338,7 +1305,7 @@ uint8_t ntc_res_linear_value(uint8_t ntc_value)
         	 disp_ntc_value[0]= disp_ntc_value[0] - 1 ;
 
              //display_ntc_temp_value(disp_ntc_value[0]);
-             HAL_Delay(5);//osDelay(50);//HAL_Delay(400);
+             HAL_Delay(5);//tx_thread_sleep(50);//HAL_Delay(400);
 
         //	read_input_times =1;
 

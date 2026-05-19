@@ -22,6 +22,8 @@
 #include "stm32g0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "bsp.h"
+#include "bsp_adc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,6 +117,29 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 channel 2 and channel 3 interrupts.
+  */
+void DMA1_Channel2_3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
+
+  /* Check if DMA1 Channel 2 transfer complete flag is set */
+  if(LL_DMA_IsActiveFlag_TC2(DMA1))
+  {
+    /* Clear transfer complete flag */
+    LL_DMA_ClearFlag_TC2(DMA1);
+    
+    /* Set ADC conversion complete flag */
+    adc_dma_conversion_complete = 1;
+  }
+
+  /* USER CODE END DMA1_Channel2_3_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel2_3_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM16 global interrupt.
   */
 void TIM16_IRQHandler(void)
@@ -134,6 +159,14 @@ void TIM16_IRQHandler(void)
 void TIM17_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM17_IRQn 0 */
+  if(LL_TIM_IsActiveFlag_UPDATE(TIM17)){
+	 
+	   LL_TIM_ClearFlag_UPDATE(TIM17); // ✅ 清除更新中断标志
+	   tim17_isr_callback_handler();//tim17_isr_callback_handler();
+  
+  
+   }
+
 
   /* USER CODE END TIM17_IRQn 0 */
   /* USER CODE BEGIN TIM17_IRQn 1 */
@@ -147,9 +180,25 @@ void TIM17_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
+  volatile uint8_t data;
+   
+	 if(LL_USART_IsActiveFlag_RXNE(USART2)){
+   
+		//LL_USART_ClearFlag_RXNE(USART2);
+	   data = LL_USART_ReceiveData8(USART2);
+  
+	  usart2_rx_callbck_handler(data);
+   
+	 }
+
 
   /* USER CODE END USART2_IRQn 0 */
   /* USER CODE BEGIN USART2_IRQn 1 */
+	 
+  if(LL_USART_IsActiveFlag_ORE(USART2)){
+  
+		LL_USART_ClearFlag_ORE(USART2);
+	}
 
   /* USER CODE END USART2_IRQn 1 */
 }

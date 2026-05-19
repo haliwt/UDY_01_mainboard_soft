@@ -5,14 +5,19 @@
  *      Author: Administrator
  */
 #include "bsp.h"
+#include "tim.h"
 
 void buzzer_sound(void)
 {
-	HAL_TIM_PWM_Start(&htim14,TIM_CHANNEL_1);
-    osDelay(20);
-    HAL_TIM_PWM_Stop(&htim14,TIM_CHANNEL_1);
+	LL_TIM_CC_EnableChannel(TIM14, LL_TIM_CHANNEL_CH1);
+    LL_TIM_EnableCounter(TIM14);
+    tx_thread_sleep(20);
+}
 
-
+void close_buzzer_sound(void)
+{
+    LL_TIM_CC_DisableChannel(TIM14, LL_TIM_CHANNEL_CH1);
+    LL_TIM_DisableCounter(TIM14);
 }
 
 

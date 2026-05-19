@@ -15,5 +15,6 @@ void Buzzer_Fan_Error_Sound(void);
 
 void Buzzer_Ptc_Error_Sound(void);
 
+void close_buzzer_sound(void);
 
 #endif /* BSP_INC_BSP_BUZZER_H_ */

@@ -352,19 +352,14 @@ void FillFrame_Response(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLe
 
 
 // 公共函数：发送数据
-void TransmitData(uint8_t *buf, uint8_t size) 
+void TransmitData(const uint8_t *buf, uint8_t size) 
 {
     transferSize = size;
 
-    #if USART1_IT_FLAG
-    if (transferSize) {
-        while (transOngoingFlag); // 等待传输完成
-        transOngoingFlag = 1;
-        HAL_UART_Transmit_IT(&huart1, buf, transferSize);
-    }
-    #else
-    	HAL_UART_Transmit_DMA(&huart2, buf, transferSize);
-    #endif
+  
+    	//HAL_UART_Transmit_DMA(&huart2, buf, transferSize);
+    USART2_DMA_Send((const uint8_t*)buf,(uint8_t)size);
+   
 }
 
 // 发送实时温湿度数据
@@ -503,11 +498,52 @@ void SendWifidata_Two_Data(uint8_t cmd,uint8_t datacmd)
 void Start_DMA_Receive(void) 
 {
     // 清空缓冲区
-    memset(rxBuffer, 0, MAX_BUFFER_SIZE);
+    memset(rxBuffer, 0, RX_DATA_SIZE);
     dataReceived = 0;
     
-    // 启动DMA接收
-    HAL_UART_Receive_DMA(&huart2, rxBuffer,sizeof(rxBuffer));
+    // 配置USART2_RX的DMA通道（DMA1通道3）
+    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMAMUX_REQ_USART2_RX);
+    
+    // 设置数据传输方向
+    LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_3, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    
+    // 设置通道优先级
+    LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PRIORITY_LOW);
+    
+    // 设置模式为普通模式
+    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_3, LL_DMA_MODE_NORMAL);
+    
+    // 设置外设地址（USART2的DR寄存器）
+    // 设置内存地址（接收缓冲区）
+    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
+                           (uint32_t)&USART2->RDR,
+                           (uint32_t)rxBuffer,
+                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    
+    // 设置传输长度
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, sizeof(rxBuffer));
+    
+    // 设置外设和内存增量模式
+    LL_DMA_SetPeriphIncMode(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PERIPH_NOINCREMENT);
+    LL_DMA_SetMemoryIncMode(DMA1, LL_DMA_CHANNEL_3, LL_DMA_MEMORY_INCREMENT);
+    
+    // 设置数据宽度
+    LL_DMA_SetPeriphSize(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PDATAALIGN_BYTE);
+    LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_3, LL_DMA_MDATAALIGN_BYTE);
+    
+    // 清除标志
+    LL_DMA_ClearFlag_TC3(DMA1);
+    LL_DMA_ClearFlag_TE3(DMA1);
+    
+    // 使能中断
+    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_3);
+    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
+    
+    // 使能DMA通道
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+    
+    // 使能USART2的DMA RX请求
+    LL_USART_EnableDMAReq_RX(USART2);
 }
 
 /********************************************************************************
@@ -518,95 +554,11 @@ void Start_DMA_Receive(void)
 	*Return Ref:NO
 	*
 *******************************************************************************/
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(huart->Instance == USART1)
-	{
-        #if USART1_IT_FLAG 
-		transOngoingFlag=0; //UART Transmit interrupt flag =0 ,RUN
-		#else
 
-		g_pro.DMA_txComplete = 1;//uartTxComplete = 1; // 标记发送完成
-
-		#endif 
-	}
-
-//	if(huart== &huart2){
-//
-//       usart2_transOngoingFlag =0;
-//
-//	}
-
-}
 
 /**
   * @brief  UART错误回调函数，处理USART1通信错误
   * @param  huart: UART句柄指针
   */
-#if 0
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) 
-{
-    
 
-	if (huart->Instance == USART1) {
-        // 重新初始化或报警
-        #if 0
-          __HAL_UART_CLEAR_OREFLAG(&huart1);
-          __HAL_UART_CLEAR_NEFLAG(&huart1);
-          __HAL_UART_CLEAR_FEFLAG(&huart1);
-           
-          
-          temp=USART1->ISR;
-          temp = USART1->RDR;
-		  
-     
-		  UART_Start_Receive_IT(&huart1,inputBuf,1);
-		 #endif 
-	    /* 1. 清除所有可能出现的错误标志 */
-	    // 使用单条语句清除多个标志（更高效）
-	    __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_OREF | UART_CLEAR_NEF | UART_CLEAR_FEF);
-
-	    /* 2. 读取状态和数据寄存器（清空残留数据）*/
-	    // 使用UNUSED宏避免编译器警告（如果不需要实际值）
-	    //UNUSED(uint32_t temp_isr = huart->Instance->ISR);  // 读取ISR会清除部分标志
-	    //UNUSED(uint32_t temp_rdr = huart->Instance->RDR);  // 清空接收寄存器
-	      /* 2. 清空寄存器（简洁写法）*/
-		    (void)huart->Instance->ISR;  // 清除状态标志
-		    (void)huart->Instance->RDR;  // 清空接收数据
-
-	    /* 3. 重启接收（带错误检查）*/
-	    if (HAL_UART_GetState(huart) == HAL_UART_STATE_READY) {
-	         Start_DMA_Receive(); // HAL_UART_Receive_IT(huart, inputBuf, 1);  // 重新启动单字节中断接收
-	    } else {
-	        // 可选：硬件复位USART（严重错误时）
-	        __HAL_UART_DISABLE(huart);
-	        __HAL_UART_ENABLE(huart);
-	        HAL_UART_Receive_IT(huart, inputBuf, 1);
-	    }
-
-	    /* 4. 可选：记录错误日志或触发报警 */
-	    //Error_Counter++;  // 全局错误计数器
-    }
-	else if (huart->Instance == USART2){
-
-		 /* 1. 清除所有可能出现的错误标志 */
-	    // 使用单条语句清除多个标志（更高效）
-	    __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_OREF | UART_CLEAR_NEF | UART_CLEAR_FEF);
-
-	    /* 2. 读取状态和数据寄存器（清空残留数据）*/
-	    // 使用UNUSED宏避免编译器警告（如果不需要实际值）
-	    //UNUSED(uint32_t temp_isr = huart->Instance->ISR);  // 读取ISR会清除部分标志
-	    //UNUSED(uint32_t temp_rdr = huart->Instance->RDR);  // 清空接收寄存器
-		  /* 2. 清空寄存器（简洁写法）*/
-		(void)huart->Instance->ISR;  // 清除状态标志
-		(void)huart->Instance->RDR;  // 清空接收数据
-
-		  /* 3. 重启接收（带错误检查）*/
-	    if (HAL_UART_GetState(huart) == HAL_UART_STATE_READY) {
-	          UART_Start_Receive_IT(&huart2,wifi_rx_inputBuf,1);// 重新启动单字节中断接收
-	    }
-
-	}
-}
-#endif 
 

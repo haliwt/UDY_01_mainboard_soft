@@ -51,32 +51,32 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x01: //表示�?机指�?
 
-        if(pdata[3] == 0x00){ // comand 判断是数据还是命�?
+   
 
 		
-          if(pdata[4] == 0x01){ 
-		  g_disp.g_second_disp_flag = 1;
+        if(pdata[3] == 0x01){ 
+
 		  g_pro.gpower_on = power_on;
 		  power_on_counter++;
           buzzer_sound();
 		 
 		 
           SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-          osDelay(5);
+          tx_thread_sleep(5);
         }
         else{ //close 
          
           buzzer_sound();
-		  g_disp.g_second_disp_flag = 1;
+	
 		  g_pro.gpower_on = power_off;
           power_off_test_counter++;
 		
 		 SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
-		 osDelay(5);
+		 tx_thread_sleep(5);
 
         }
 
-    	}
+    	
 
      break;
 
@@ -87,7 +87,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 				  
 		if(pdata[4] == 0x01){ 
 
-	       g_disp.g_second_disp_flag = 1;
+	  
 
 		}
 	}
@@ -95,8 +95,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x02: //PTC打开关闭指令
 
-     if(pdata[3] == 0x00){ //判断是否是数据，或�?�指令�?�知�? 00- 命令和指令，下一个字节是指令 �?0x0F- 数据，下�?个字节是数据个数
-	 	if(pdata[4]==0x01){
+    
+	 	if(pdata[3]==0x01){
 	 	if(g_pro.gpower_on == power_on){
 		 
           buzzer_sound();
@@ -104,10 +104,10 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		
 		  //manual close flag :
 		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
-		   osDelay(5);
+		   tx_thread_sleep(5);
 		}
        }
-       else if(pdata[4] == 0x0){
+       else if(pdata[3] == 0){
 	   	 if(g_pro.gpower_on == power_on){
 		
           buzzer_sound();
@@ -116,13 +116,13 @@ void receive_data_from_displayboard(uint8_t *pdata)
           DRY_CLOSE();
 		 
 		  SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
-		  osDelay(5);
+		  tx_thread_sleep(5);
 		  
             
          
 	   	 }
        }
-     	}
+     	
      break;
 
 	 
@@ -130,37 +130,37 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 	  case 0x22: //notice cmd ,PTC打开关闭指令,buzzer don't sound,温度对比后的指令
 
-	  if(pdata[3]==0){ //表示是指�?
 
-      if(pdata[4] == 0x01){
+
+      if(pdata[3] == 0x01){
         
         if(g_pro.gpower_on == power_on){
 
         
 		 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.01.07
-		 osDelay(5);
+		 tx_thread_sleep(5);
 		 g_pro.gDry = 1;
      
 
 	 	}
 	  }
-      else if(pdata[4] == 0x0){
+      else if(pdata[3] == 0x0){
         if(g_pro.gpower_on == power_on){
 
           SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.01.07
-		   osDelay(5);
+		   tx_thread_sleep(5);
            g_pro.gDry =0;
 		
           DRY_CLOSE();
 		  }
 		}
-	  }
+	  
      break;
 
      case 0x03: //PLASMA 打开关闭指令
 
-       if(pdata[3] == 0x00){
-	    if(pdata[4]==0x01){
+      
+	    if(pdata[3]==0x01){
        if(g_pro.gpower_on == power_on){
 	   	  
             buzzer_sound();
@@ -171,7 +171,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
            
         }
         }
-        else if(pdata[4] == 0x0){
+        else if(pdata[3] == 0){
         if(g_pro.gpower_on == power_on){ 
             buzzer_sound();
 			g_pro.gPlasma = 0;
@@ -182,14 +182,14 @@ void receive_data_from_displayboard(uint8_t *pdata)
            
         }
         }
-       	}
+       	
       break;
 
 
       case 0x04: //ultrasonic  打开关闭指令
 
-       if(pdata[3] == 0x00){ // 00-》表示是指令或�?��?�知，不是数据，下一个数据就是命令或者�?�知
-	 	if(pdata[4]==0x01){
+      // 00-》表示是指令或�?��?�知，不是数据，下一个数据就是命令或者�?�知
+	 	if(pdata[3]==0x01){
           if(g_pro.gpower_on == power_on){ 
             buzzer_sound();
 			g_pro.gMouse = 1;
@@ -199,7 +199,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
            
           }
        }
-        else if(pdata[4] == 0x0){ //close 
+        else if(pdata[3] == 0x0){ //close 
 		 if(g_pro.gpower_on == power_on){ 
 					buzzer_sound();
 					g_pro.gMouse = 0;
@@ -210,16 +210,16 @@ void receive_data_from_displayboard(uint8_t *pdata)
         }
        }
     
-       	}
+       	
      break;
 
       case 0x05: // link wifi command
 
-       if(pdata[3] == 0x00){
-	 	if(pdata[4]==0x01){
+     
+	 	if(pdata[3]==0x01){
         if(g_pro.gpower_on == power_on){ 
 		  SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
-		  osDelay(5);
+		  tx_thread_sleep(5);
           buzzer_sound();
 		  
         
@@ -228,53 +228,53 @@ void receive_data_from_displayboard(uint8_t *pdata)
          }
         
        	}
-       	}
+       	
 
      break;
 
      case 0x06: //buzzer sound command 
 
-        if(pdata[3] == 0x00){  //buzzer sound 
-          if(pdata[4]==0x01){
+    
+          if(pdata[3]==0x01){
            buzzer_sound();
         }
         else if(pdata[4] == 0x0){ // don't buzzer sound .
         
         }
-    	}
+    	
 
      break;
 
 
 	 case 0x10: //has two display board.
 
-	   if(pdata[3] == 0x00){ //notice message.
-	   	   if(pdata[4]==0x01){
-           g_disp.g_second_disp_flag = 1; 
+
+	   	   if(pdata[3]==0x01){
+         
 
 	       }
 		   else{
-		   g_disp.g_second_disp_flag = 0; 
+	
 		   	}
-	   	}
+	   	
 		
      break;
 
      case 0x16 : //buzzer sound command with answer .
 
       
-       if(pdata[3] == 0x00){  //buzzer sound 
+  
 
-	      if(pdata[4]==0x01){
+	      if(pdata[3]==0x01){
 
           if(g_pro.gpower_on == power_on){  
           SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.01.07
-          osDelay(5);
+          tx_thread_sleep(5);
           buzzer_sound();
 
           }
 	      }
-       	}
+       	
 
 
      break;
@@ -321,7 +321,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	  
 	 case 0x2A: //display board set up tempeature value send data to mainboard
 	 
-			if(pdata[3] == 0x0F){ //数据
+			
 
 			   if(pdata[4]==0x01){ // has dat only one value ,next receive byte is value
 	         
@@ -346,7 +346,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			 }
 				
 	 
-			}
+			
 	 break;
 
 	  

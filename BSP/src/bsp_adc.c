@@ -5,72 +5,104 @@
 
 #define TOLERANCE_ERROR      100
 
+// ADC DMA 相关定义
+#define ADC_DMA_BUFFER_SIZE     2   // 两个通道：IN0 和 IN1
+#define ADC_CHANNEL_NUM         2   // 通道数量
 
+// ADC DMA 缓冲区
+static uint16_t adc_dma_buffer[ADC_DMA_BUFFER_SIZE];
 
-static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
+// ADC 转换完成标志
+volatile uint8_t adc_dma_conversion_complete = 0;
 
 static void Judge_PTC_Temperature_Value(uint16_t adc_ptc);
 
 static void Judge_Fan_State(uint16_t adc_value);
 
+// ADC DMA 初始化函数
+void bsp_adc_dma_init(void);
+
+// 获取 DMA 转换结果
+uint16_t bsp_adc_get_dma_result(uint32_t ch);
+
 
 
 /*****************************************************************
 *
-	*Function Name: static uint16_t Get_Adc(uint32_t ch)  
-	*Function ADC input channel be selected "which one channe"
-	*Input Ref: which one ? AC_Channel_?
-	*Return Ref: No
-	*
+	*Function Name: void bsp_adc_dma_init(void)
+	*Function: Initialize ADC with DMA
+	*Input Ref: None
+	*Return Ref: None
 	*
 *****************************************************************/
- uint16_t Get_Adc_Channel(uint32_t ch)   
+void bsp_adc_dma_init(void)
 {
-
-    static uint8_t adc_result;
-	ADC_ChannelConfTypeDef ADC1_ChanConf;
-
-	ADC1_ChanConf.Channel=ch;                                   //Í¨µÀ
-    ADC1_ChanConf.Rank= ADC_REGULAR_RANK_1;                                    //第一个序�?
-    ADC1_ChanConf.SamplingTime=ADC_SAMPLETIME_19CYCLES_5;   //²ÉÑùÊ±¼ä               
-
-
-	HAL_ADC_ConfigChannel(&hadc1,&ADC1_ChanConf);        //Í¨µÀÅäÖÃ
-	
-    HAL_ADC_Start(&hadc1);                               //start ADC transmit
-	
-    adc_result=HAL_ADC_PollForConversion(&hadc1,10);                //轮询
-
-	if(adc_result == HAL_OK){
- 
-	   return (uint16_t)HAL_ADC_GetValue(&hadc1);	        	//·µ»Ø×î½üÒ»´ÎADC1¹æÔò×éµÄ×ª»»½á¹û
-	}
-	else{
-      return HAL_TIMEOUT;
-	}
+    // 配置ADC为扫描模式，连续转换
+    LL_ADC_REG_SetSequencerLength(ADC1, LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS);
+    LL_ADC_REG_SetContinuousMode(ADC1, LL_ADC_REG_CONV_CONTINUOUS);
+    LL_ADC_REG_SetDMATransfer(ADC1, LL_ADC_REG_DMA_TRANSFER_UNLIMITED);
+    
+    // 配置通道序列
+    LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_0);
+    LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_1);
+    
+    // 设置采样时间
+    LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_0, LL_ADC_SAMPLINGTIME_COMMON_1);
+    LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_1, LL_ADC_SAMPLINGTIME_COMMON_1);
+    
+    // 配置DMA
+    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_2,
+                           (uint32_t)&ADC1->DR,
+                           (uint32_t)adc_dma_buffer,
+                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    
+    // 设置DMA传输长度
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, ADC_DMA_BUFFER_SIZE);
+    
+    // 使能DMA中断
+    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
+    
+    // 使能DMA通道
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+    
+    // 启动ADC转换
+    LL_ADC_REG_StartConversion(ADC1);
 }
+
 /*****************************************************************
 *
-	*Function Name: static uint16_t Get_Adc(uint32_t ch)  
-	*Function ADC input channel be selected "which one channe"
-	*Input Ref: which one ? AC_Channel_?
-	*Return Ref: No
-	*
+	*Function Name: uint16_t bsp_adc_get_dma_result(uint32_t ch)
+	*Function: Get ADC result from DMA buffer
+	*Input Ref: ADC channel
+	*Return Ref: ADC value
 	*
 *****************************************************************/
-static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times)
+uint16_t bsp_adc_get_dma_result(uint32_t ch)
 {
-	uint32_t temp_val=0;
-	uint8_t t;
-	
-	for(t=0;t<times;t++)
-	{
-        
-		temp_val+=Get_Adc_Channel(ch);
-		
-	}
-	return temp_val/times;
-} 
+    if(ch == LL_ADC_CHANNEL_0)
+    {
+        return adc_dma_buffer[0];
+    }
+    else if(ch == LL_ADC_CHANNEL_1)
+    {
+        return adc_dma_buffer[1];
+    }
+    return 0;
+}
+
+/*****************************************************************
+*
+	*Function Name: uint16_t Get_Adc_Channel(uint32_t ch)
+	*Function: Get ADC value (DMA mode)
+	*Input Ref: ADC channel
+	*Return Ref: ADC value
+	*
+*****************************************************************/
+uint16_t Get_Adc_Channel(uint32_t ch)   
+{
+    return bsp_adc_get_dma_result(ch);
+}
+
 
 
 
@@ -79,13 +111,13 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
     
 	uint16_t adcx;
 	
-	adcx = Get_Adc_Average(channel,times);
+	adcx = Get_Adc_Channel(channel);
 
-	osDelay(10);
+	tx_thread_sleep(10);
 
     g_pro.read_ptc_voltage  =(uint16_t)((adcx * 3300)/4096); //amplification 100 ,3.11V -> 311
 
-	osDelay(10);
+	tx_thread_sleep(10);
 
     g_pro.read_ptc_voltage = g_pro.read_ptc_voltage-100;
 
@@ -114,28 +146,28 @@ void read_ntc_value_init(void)
 
 	if(power_on_first ==0){
 	    power_on_first++;
-	    g_pro.adc_judge_flag = Get_Adc_Channel(ADC_CHANNEL_1) ;
+	    g_pro.adc_judge_flag = Get_Adc_Channel(LL_ADC_CHANNEL_1) ;
 
 	}
 
-	if(g_pro.adc_judge_flag !=HAL_TIMEOUT){
+	if(g_pro.adc_judge_flag !=0xFF){
 
-		Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
+		Get_PTC_Temperature_Voltage(LL_ADC_CHANNEL_1,10);
 
 	    //Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
 	    getNtc_temperatureValue_init(g_pro.read_ptc_voltage);
 
 		sendData_Real_Temp(g_pro.read_ntc_tem_value);
-			   
-		osDelay(5);
+		   
+		tx_thread_sleep(5);
 		copy_temperature_value= g_pro.read_ntc_tem_value;
 
 	}
-	else if(g_pro.adc_judge_flag==HAL_TIMEOUT){
+	else if(g_pro.adc_judge_flag==0xFF){
 
 	    power_on_first=0;
 		sendData_Real_Temp(copy_temperature_value);
-		osDelay(5);
+		tx_thread_sleep(5);
 
 	}
    
@@ -165,23 +197,23 @@ void Update_PtcADC_ToDisplayBoard_Value(void)
 //
 //	}
 
-	if(g_pro.adc_judge_flag !=HAL_TIMEOUT){
+	if(g_pro.adc_judge_flag !=0xFF){
 
-		Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
+		Get_PTC_Temperature_Voltage(LL_ADC_CHANNEL_1,10);
 
 	    Get_Ntc_Resistance_Temperature_Handler(g_pro.read_ptc_voltage);
 
 		sendData_Real_Temp(g_pro.read_ntc_temperature_value);
-			   
-		osDelay(5);
+		   
+		tx_thread_sleep(5);
 		copy_temperature_value= g_pro.read_ntc_temperature_value;
 
 	}
-	else if(g_pro.adc_judge_flag==HAL_TIMEOUT){
+	else if(g_pro.adc_judge_flag==0xFF){
 
 	   // power_on_first=0;
 		sendData_Real_Temp(copy_temperature_value);
-		osDelay(5);
+		tx_thread_sleep(5);
 
 	}
    

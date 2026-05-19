@@ -8,22 +8,20 @@
 
 /********************************************************************************
 	**
-	*Function Name:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-	*Function :UART callback function  for UART interrupt for receive data
-	*Input Ref: structure UART_HandleTypeDef pointer
+	*Function Name:void tim17_isr_callback_handler(void)
+	*Function : interrupt is 10ms 
+	*Input Ref: 
 	*Return Ref:NO
 	*
 *******************************************************************************/
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void tim17_isr_callback_handler(void)
 {
    static  uint16_t tm0;
  
-
-    if(htim->Instance==TIM17){ //timer number14 is 100ms.
-       tm0++;
+         tm0++;
 	  
 	
-	   if(tm0> 999){ //1s
+	   if(tm0> 99){ //10ms * 100 = 1000ms = 1s
 	      tm0=0;
 	       g_pro.gTimer_timer_seconds_counter++;
 			g_pro.gTimer_fan_run_one_minute++;
@@ -44,6 +42,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		 }
 	   
 
-   }
+   
 }
 

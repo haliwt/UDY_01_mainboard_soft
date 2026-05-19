@@ -1,7 +1,7 @@
 /*
  * bsp.h
  *
- *  Created on: 2025å¹?3æœ?4æ—?
+ *  Created on: 2025ï¿½?3ï¿½?4ï¿½?
  *      Author: Administrator
  */
 
@@ -10,11 +10,8 @@
 #include "main.h"
 #include "stdio.h"
 #include "string.h"
+#include "tx_api.h"
 
-
-
-
-#include "bsp_freertos.h"
 
 
 #include "bsp_ntc.h"
@@ -25,44 +22,40 @@
 
 #include "bsp_power.h"
 
-//#include "bsp_delay.h"
-//#include "bsp_dht11.h"
+
 
 #include "bsp_message.h"
 #include "bsp_cmd_link.h"
 
 #include "bsp_adc.h"
 #include "interrupt_manager.h"
+#include "bsp_usart2.h"
+#include "bsp_threadx.h"
 
-
-
-//second display board
-#include "bsp_second_display.h"
 
 
 //mainboard
 
 #include "adc.h"
+#include "dma.h"
+#include "iwdg.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
-//freeRtos
-#include "FreeRTOS.h"
-#include "task.h"
-#include "cmsis_os.h"
 
 
-#define  USE_FreeRTOS      1
+
+
+#define  THREADX_ENABLE      1
   
 #define  TEST_UNIT        0
 
 
-#if USE_FreeRTOS == 1
-	//#include "FreeRTOS.h"
-	///#include "task.h"
-	#define DISABLE_INT()    taskENTER_CRITICAL()
-	#define ENABLE_INT()     taskEXIT_CRITICAL()
+#if THREADX_ENABLE  == 1
+	
+	#define DISABLE_INT()   UINT __old_post = tx_interrupt_control(TX_INT_DISABLE)
+    #define ENABLE_INT()     tx_interrupt_control(__old_post)
 #else
 	/* ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½Ð¶ÏµÄºï¿½ */
 	#define ENABLE_INT()	__set_PRIMASK(0)	/* Ê¹ï¿½ï¿½È«ï¿½ï¿½ï¿½Ð¶ï¿½ */
@@ -109,12 +102,13 @@ typedef struct _process{
    
 
 
+
    uint8_t g_humidity_value;
    uint8_t g_temperature_value;
    uint8_t detect_fan_error_times;
 
-    uint8_t temperature_decade;    // æ¸?
-    uint8_t temperature_unit;//åº¦å??
+    uint8_t temperature_decade;    // ï¿½?
+    uint8_t temperature_unit;//åº¦ï¿½??
 	uint8_t read_ntc_temperature_value;
 	uint8_t power_on_read_ntc_flag ;
     uint8_t read_ntc_tem_value;
@@ -145,6 +139,7 @@ typedef struct _process{
    
 
 
+
    //timer
    
    uint8_t gTimer_run_function_counter;
@@ -161,6 +156,14 @@ typedef struct _process{
 }process_t;
 
 extern process_t g_pro;
+
+// Display related structure
+typedef struct _display{
+    uint8_t g_second_disp_flag;
+    uint8_t g_set_temp_value_flag;
+}display_t;
+
+extern display_t g_disp;
 
 
 

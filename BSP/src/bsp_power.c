@@ -197,7 +197,7 @@ void power_off_run_handler(void)
 
 	 
 	 // SendData_Set_Command(CMD_POWER,close);
-	 // osDelay(5);
+	 // tx_thread_sleep(5);
     
 	 
        mainboard_close_all_fun();

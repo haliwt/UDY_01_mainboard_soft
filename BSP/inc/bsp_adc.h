@@ -2,6 +2,8 @@
 #define __BSP_ADC_H_
 #include "main.h"
 
+#define ADC_DMA_BUFFER_SIZE     2   // 两个通道：IN0 和 IN1
+#define ADC_CHANNEL_NUM         2   // 通道数量
 
 uint16_t Get_Adc_Channel(uint32_t ch) ;
 
@@ -17,6 +19,7 @@ uint16_t bsp_adc_get_dma_result(uint32_t ch);
 extern volatile uint8_t adc_dma_conversion_complete;
 
 
+extern uint16_t adc_dma_buffer[ADC_DMA_BUFFER_SIZE];
 
 
 void read_ntc_value_init(void);

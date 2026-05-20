@@ -84,9 +84,9 @@
 /* Override various options with default values already assigned in tx_port.h. Please also refer
    to tx_port.h for descriptions on each of these options.  */
 
-/*#define TX_MAX_PRIORITIES                32*/
+#define TX_MAX_PRIORITIES                8
 /*#define TX_THREAD_USER_EXTENSION                ????*/
-/*#define TX_TIMER_THREAD_STACK_SIZE                1024*/
+#define TX_TIMER_THREAD_STACK_SIZE                128/*1024*/
 /*#define TX_TIMER_THREAD_PRIORITY                0*/
 
 /*#define TX_MINIMUM_STACK                200*/

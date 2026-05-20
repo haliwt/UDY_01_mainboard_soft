@@ -124,15 +124,7 @@ void DMA1_Channel2_3_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
 
   /* Check if DMA1 Channel 2 transfer complete flag is set */
-  if(LL_DMA_IsActiveFlag_TC2(DMA1))
-  {
-    /* Clear transfer complete flag */
-    LL_DMA_ClearFlag_TC2(DMA1);
-    
-    /* Set ADC conversion complete flag */
-    adc_dma_conversion_complete = 1;
-  }
-
+ 
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
 

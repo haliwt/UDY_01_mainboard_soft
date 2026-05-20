@@ -138,8 +138,8 @@ typedef struct _process{
    uint8_t first_connect_wifi_flag;
    uint8_t DMA_txComplete;
 
-
-   
+   uint8_t rx_data_power_on_f ;
+   uint8_t rx_data_success_f;
    
 
 

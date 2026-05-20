@@ -13,14 +13,17 @@
 #define DECODER_BIT_9          (1<< 9)
 
 
-uint8_t inputBuf[1];
+
+
+#define DEBUG_ENABLE   1
+
 
 
 /***********************************************************************************************************
 											函数声明
 ***********************************************************************************************************/
-#define STACK_SIZE_DECODER  512//512//128//1792//3072//2048//1024//896//768
-#define STACK_SIZE_RUN      512//1024//1536//1280//1024//1536//1024//896//1792//1664//1280
+#define STACK_SIZE_DECODER  1280//512//128//1792//3072//2048//1024//896//768
+#define STACK_SIZE_RUN      896//1024//1536//1280//1024//1536//1024//896//1792//1664//1280
 
 
 __attribute__((aligned(8))) static UCHAR stack_run_pro[STACK_SIZE_RUN];
@@ -53,13 +56,14 @@ static void  threadx_handler(void);
 
 #if DEBUG_ENABLE
 
-static void debug_stack_ui_check(void);
+static void debug_stack_run_check(void);
 
 static void debug_stack_decoder_check(void);
 
-ULONG unused_ui,unused_decoder ;
+ULONG unused_run,unused_decoder ;
 #endif 
 
+//uint8_t inputBuf[1];
 
 
 
@@ -106,9 +110,29 @@ static void vTaskRunPro(ULONG thread_input)
   (void)thread_input;  /* 消除未使用的参数警告 */
   while(1){
     
+    if(g_pro.rx_data_power_on_f == 1){
+		
+		  g_pro.rx_data_power_on_f =3;
+		   buzzer_sound();
+		 
+          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
+          tx_thread_sleep(10);
 
+	}
+	else if(g_pro.rx_data_power_on_f == 2){
+	         g_pro.rx_data_power_on_f =4;
+			  buzzer_sound();
+			
+			 SendWifiData_Answer_Cmd(CMD_POWER,0); //WT.EDIT 2025.01.07 
+			 tx_thread_sleep(10);
+
+
+	}
 	power_onoff_handler(g_pro.gpower_on);
 	LL_IWDG_ReloadCounter(IWDG);
+      #if DEBUG_ENABLE
+				 debug_stack_run_check();
+		   #endif 
 
     tx_thread_sleep(1);
 
@@ -137,13 +161,17 @@ static void vTaskDecoderPro(ULONG thread_input)
 
    
      // 阻塞等待 ISR 投递
-      if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
+      if(g_pro.rx_data_success_f ==1)//if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
-          
+          g_pro.rx_data_success_f ++;
 				usart2_rx_decoder();
+				LL_IWDG_ReloadCounter(IWDG);
+				 #if DEBUG_ENABLE
+				 debug_stack_decoder_check();
+		   #endif 
 
 	  }
-        
+      tx_thread_sleep(1) ;
     }
 }
  /**********************************************************************************************************
@@ -165,8 +193,8 @@ static void threadx_handler(void)
 					 0, 					  /* 传递给任务的参数 */
 					 stack_decoder_pro, 	 /* 堆栈基地址 */
 					 STACK_SIZE_DECODER,	   /* 堆栈空间大小 */ 
-					 0,
-					 0,
+					 1,
+					 1,
 					 TX_NO_TIME_SLICE,
 					 TX_AUTO_START);
 				 
@@ -176,8 +204,8 @@ static void threadx_handler(void)
 					  0,							/* 传递给任务的参数 */
 					  stack_run_pro, 			   /* 堆栈基地址 */
 					  STACK_SIZE_RUN,			   /* 堆栈空间大小 */ 
-					  1,							/* 任务优先级*/
-					  1,							/* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
+					  2,							/* 任务优先级*/
+					  2,							/* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */
     
@@ -240,4 +268,52 @@ void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
     while(1);  // 调试阶段可以卡住
 }
 
+#if DEBUG_ENABLE
+static void debug_stack_run_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+
+  
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_RUN; i++)
+    {
+        if (stack_run_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+  
+ 
+	
+	unused_run = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+
+
+static void debug_stack_decoder_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+
+
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_DECODER; i++)
+    {
+        if (stack_decoder_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+    unused_decoder = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+
+
+
+#endif 
 

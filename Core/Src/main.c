@@ -101,7 +101,7 @@ int main(void)
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 
-     bsp_init();
+    bsp_init();
     tx_kernel_enter();
   /* USER CODE END 2 */
 

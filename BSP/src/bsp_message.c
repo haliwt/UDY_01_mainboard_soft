@@ -50,18 +50,15 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x01: //表示�?机指�?
 
-   
-
-		
-        if(pdata[3] == 0x01){ 
+       if(pdata[3] == 0x01){ 
 
 		  g_pro.gpower_on = power_on;
 		  power_on_counter++;
-          buzzer_sound();
+          //buzzer_sound();
+		  g_pro.rx_data_power_on_f = 1;
 		 
-		 
-          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-          tx_thread_sleep(5);
+          //SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
+          //tx_thread_sleep(10);
         }
         else{ //close 
          
@@ -69,9 +66,9 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	
 		  g_pro.gpower_on = power_off;
           power_off_test_counter++;
-		
-		 SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
-		 tx_thread_sleep(5);
+		  g_pro.rx_data_power_on_f = 2;
+		 //SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
+		 //tx_thread_sleep(10);
 
         }
 
@@ -102,8 +99,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
           g_pro.gDry = 1;
 		
 		  //manual close flag :
-		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
-		   tx_thread_sleep(5);
+		  // SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
+		   //tx_thread_sleep(5);
 		}
        }
        else if(pdata[3] == 0){
@@ -114,8 +111,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	
           DRY_CLOSE();
 		 
-		  SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
-		  tx_thread_sleep(5);
+		  ///SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
+		  ///tx_thread_sleep(5);
 		  
             
          

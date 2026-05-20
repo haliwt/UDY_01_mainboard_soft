@@ -107,7 +107,7 @@ void usart2_rx_callbck_handler(uint8_t data)
                 gl_tMsg.bcc_check_code= data;
 
                  // 在 ThreadX 中，这里可以使用事件通知或者信号量来通知任务处理数据
-                //  vtask_isq_handler(); //暂时注释掉，因为没有定义
+                 vtask_isq_handler(); //暂时注释掉，因为没有定义
                
 
           break;

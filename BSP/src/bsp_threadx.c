@@ -110,24 +110,7 @@ static void vTaskRunPro(ULONG thread_input)
   (void)thread_input;  /* 消除未使用的参数警告 */
   while(1){
     
-    if(g_pro.rx_data_power_on_f == 1){
-		
-		  g_pro.rx_data_power_on_f =3;
-		   buzzer_sound();
-		 
-          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-          tx_thread_sleep(10);
-
-	}
-	else if(g_pro.rx_data_power_on_f == 2){
-	         g_pro.rx_data_power_on_f =4;
-			  buzzer_sound();
-			
-			 SendWifiData_Answer_Cmd(CMD_POWER,0); //WT.EDIT 2025.01.07 
-			 tx_thread_sleep(10);
-
-
-	}
+   
 	power_onoff_handler(g_pro.gpower_on);
 	LL_IWDG_ReloadCounter(IWDG);
       #if DEBUG_ENABLE
@@ -161,7 +144,7 @@ static void vTaskDecoderPro(ULONG thread_input)
 
    
      // 阻塞等待 ISR 投递
-      if(g_pro.rx_data_success_f ==1)//if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
+      if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
           g_pro.rx_data_success_f ++;
 				usart2_rx_decoder();

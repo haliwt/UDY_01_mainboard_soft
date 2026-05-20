@@ -54,11 +54,11 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 		  g_pro.gpower_on = power_on;
 		  power_on_counter++;
-          //buzzer_sound();
+          buzzer_sound();
 		  g_pro.rx_data_power_on_f = 1;
 		 
-          //SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-          //tx_thread_sleep(10);
+          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
+          tx_thread_sleep(10);
         }
         else{ //close 
          
@@ -67,8 +67,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  g_pro.gpower_on = power_off;
           power_off_test_counter++;
 		  g_pro.rx_data_power_on_f = 2;
-		 //SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
-		 //tx_thread_sleep(10);
+		 SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
+		 tx_thread_sleep(10);
 
         }
 
@@ -99,8 +99,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
           g_pro.gDry = 1;
 		
 		  //manual close flag :
-		  // SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
-		   //tx_thread_sleep(5);
+		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
+		   tx_thread_sleep(10);
 		}
        }
        else if(pdata[3] == 0){

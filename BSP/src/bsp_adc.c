@@ -135,13 +135,13 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 	
 	adcx = Get_Adc_Channel(channel);
 
-	tx_thread_sleep(10);
+	//tx_thread_sleep(10);
 
     g_pro.read_ptc_voltage  =(uint16_t)((adcx * 3300 )/4096); //amplification 1000 ,3.11V -> 3110000 uV
 
-	tx_thread_sleep(10);
+	tx_thread_sleep(2);
 
-    g_pro.read_ptc_voltage = g_pro.read_ptc_voltage; // 放大后减去100mV对应的100000uV
+    g_pro.read_ptc_voltage = g_pro.read_ptc_voltage-100; // 放大后减去100mV对应的100000uV
 
 
    

@@ -12,7 +12,7 @@ static void tim14_buzzer_sound_config(void)
    LL_TIM_DisableCounter(TIM14);
    LL_TIM_GenerateEvent_UPDATE(TIM14);
    LL_TIM_SetAutoReload(TIM14, 249); //1/(249+1) =0.004MHZ = 4KHZ buzzer sound 
-   LL_TIM_OC_SetCompareCH4(TIM14, 125);
+   LL_TIM_OC_SetCompareCH1(TIM14, 125);
    LL_TIM_CC_EnableChannel(TIM14,LL_TIM_CHANNEL_CH1);
    LL_TIM_EnableCounter(TIM14);
    LL_TIM_EnableAllOutputs(TIM14);
@@ -22,7 +22,7 @@ static void tim14_stop_buzzer_sound_config(void)
 {
    LL_TIM_DisableCounter(TIM14);
    LL_TIM_CC_DisableChannel(TIM14,LL_TIM_CHANNEL_CH1);
-   LL_TIM_OC_SetCompareCH4(TIM14,0);
+   LL_TIM_OC_SetCompareCH1(TIM14,0);
 
 
 }

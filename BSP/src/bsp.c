@@ -7,6 +7,8 @@
 #include "bsp.h"
 #include "bsp_adc.h"
 
+#define DEFAULT_TEMP    50 
+
 
 process_t g_pro;
 display_t g_disp;
@@ -217,32 +219,144 @@ void copy_cmd_hanlder(void)
 
 }
 
-
 /**********************************************************************
     *
-    *Functin Name: void works_run_eight_hours_state(void)
-    *Function :  
+    *Functin Name: void temperature_control_handler(void)
+    *Function : 温度控制函数，根据实际温度和设置温度控制加热
+    *           温度设置值范围：30~50度
+    *           实际温度 < 设置温度：打开加热(DRY_OPEN)
+    *           实际温度 >= 设置温度：停止加热(DRY_CLOSE)
+    *           实际温度 >= 50度：必须停止加热
+    *           实际温度 <= 48度：才能重新打开加热
     *Input Ref: NO
     *Return Ref: NO
     *
 ************************************************************************/
-
-
-/**********************************************************************
-    *
-    *Functin Name: void fault_handler(void)
-    *Function :  
-    *Input Ref: NO
-    *Return Ref: NO
-    *
-************************************************************************/
-void fault_handler(void)
+#if 0
+void temperature_control_handler(void)
 {
-
-  
-
-
-
+    static uint8_t heating_state = 0;       // 加热状态：0-关闭，1-打开
+    static uint8_t over_temp_flag = 0;      // 过温标志：0-正常，1-超过50度
+    static uint8_t sensor_fault_flag = 0;   // 传感器故障标志：0-正常，1-故障
+    static uint16_t sensor_fault_counter = 0; // 传感器故障计数器
+    static uint16_t over_temp_counter = 0;  // 过温次数计数器
+    
+    // 获取实际温度
+    uint8_t actual_temp = g_pro.read_ntc_temperature_value;
+    uint8_t set_temp = 0;
+    
+    // 1. 温度传感器故障检测
+    if (actual_temp == 0 || actual_temp == 255) {
+        // 温度值不合理，可能是传感器故障
+        sensor_fault_counter++;
+        if (sensor_fault_counter >= 10) { // 连续10次检测到故障才判定为故障
+            sensor_fault_flag = 1;
+            // 传感器故障时停止加热
+            DRY_CLOSE();
+            heating_state = 0;
+            send_tx_cmd(0x02, 0x0); // 通知显示板关闭加热
+            
+            #ifdef DEBUG
+            printf("Temperature sensor fault detected!\n");
+            #endif
+        }
+        return; // 传感器故障，不进行温度控制
+    } else {
+        // 温度值正常，重置故障计数器和标志
+        sensor_fault_counter = 0;
+        sensor_fault_flag = 0;
+    }
+    
+    // 2. 设置温度处理
+    if(g_pro.set_temp_f == 1) {
+        // 使用用户设置的温度
+        set_temp = g_pro.gset_temperture_value;
+        
+        // 确保设置温度在30~50度范围内
+        if (set_temp < 30) {
+            set_temp = 30;
+            g_pro.gset_temperture_value = 30;
+        } else if (set_temp > 50) {
+            set_temp = 50;
+            g_pro.gset_temperture_value = 50;
+        }
+    } else {
+        // 使用默认温度
+        set_temp = DEFAULT_TEMP;
+        
+        // 默认温度下的特殊处理
+        if(actual_temp >= DEFAULT_TEMP) {
+            DRY_CLOSE(); 
+            send_tx_cmd(0x02, 0x0); // 通知显示板关闭加热
+            
+            #ifdef DEBUG
+            printf("Default temp mode: %d°C >= %d°C, heating off!\n", actual_temp, DEFAULT_TEMP);
+            #endif
+            
+            return;
+        }
+    }
+    
+    // 3. 温度控制逻辑
+    if (actual_temp >= 50) {
+        // 实际温度大于等于50度，必须停止加热
+        DRY_CLOSE();
+        heating_state = 0;
+        over_temp_flag = 1;
+        over_temp_counter++;
+        send_tx_cmd(0x02, 0x0); // 通知显示板关闭加热
+        
+        #ifdef DEBUG
+        printf("Temperature over 50°C, heating stopped! Over temp count: %d\n", over_temp_counter);
+        #endif
+    }
+    else if (over_temp_flag == 1) {
+        // 之前超过50度，需要温度下降到48度以下才能重新打开加热
+        if (actual_temp <= 48) {
+            over_temp_flag = 0;
+            // 如果当前温度小于设置温度，打开加热
+            if (actual_temp < set_temp) {
+                DRY_OPEN();
+                heating_state = 1;
+                send_tx_cmd(0x02, 0x1); // 通知显示板打开加热
+                
+                #ifdef DEBUG
+                printf("Temperature recovered to %d°C, heating resumed!\n", actual_temp);
+                #endif
+            }
+        }
+    }
+    else if (actual_temp < set_temp) {
+        // 实际温度小于设置温度，打开加热
+        if (heating_state == 0) { // 只有当前关闭时才打开，避免频繁开关
+            DRY_OPEN();
+            heating_state = 1;
+            send_tx_cmd(0x02, 0x1); // 通知显示板打开加热
+            
+            #ifdef DEBUG
+            printf("Temperature %d°C < set %d°C, heating on!\n", actual_temp, set_temp);
+            #endif
+        }
+    }
+    else if (actual_temp >= set_temp) {
+        // 实际温度大于等于设置温度，停止加热
+        if (heating_state == 1) { // 只有当前打开时才关闭，避免频繁开关
+            DRY_CLOSE();
+            heating_state = 0;
+            send_tx_cmd(0x02, 0x0); // 通知显示板关闭加热
+            
+            #ifdef DEBUG
+            printf("Temperature %d°C >= set %d°C, heating off!\n", actual_temp, set_temp);
+            #endif
+        }
+    }
+    
+    // 4. 更新全局状态
+    g_pro.heating_state = heating_state;
+    g_pro.over_temp_flag = over_temp_flag;
+    g_pro.over_temp_counter = over_temp_counter;
 }
+
+#endif 
 
 

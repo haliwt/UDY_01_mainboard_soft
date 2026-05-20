@@ -120,12 +120,16 @@ typedef struct _process{
    uint8_t gTemp_value;
    uint8_t gset_temperture_value;
    uint8_t temperature_init_value;
+   uint8_t set_temp_f;            // 设置温度标志：0-使用默认温度，1-使用用户设置温度
 
  
 
 
    uint8_t gdisp_minutes_value;
    uint8_t  disp_timer_minutes_value;
+   uint8_t heating_state;         // 加热状态：0-关闭，1-打开
+   uint8_t over_temp_flag;        // 过温标志：0-正常，1-超过50度
+   uint16_t over_temp_counter;    // 过温次数计数器
 
    uint8_t g_copy_power_onoff_flag;
    uint8_t delay_run_adc_counter;
@@ -176,6 +180,7 @@ void mainboard_close_all_fun(void);
 void works_run_eight_hours_state(void);
 
 void copy_cmd_hanlder(void);
+
 
 void  smart_phone_timer_power_on_handler(void);
 

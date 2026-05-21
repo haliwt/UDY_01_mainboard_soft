@@ -48,7 +48,7 @@ void mainboard_fun_handler(void)
  
    static uint8_t ac220v_fan_run_flag,run_cmd_flag;
 
-	if(g_pro.gTimer_run_function_counter > 0){// 2s  //300 ~= 6s, 50 ~=1s
+	if(g_pro.gTimer_run_function_counter > 5){// 2s  //300 ~= 6s, 50 ~=1s
     
 	   g_pro.gTimer_run_function_counter=0;
 
@@ -107,6 +107,7 @@ void mainboard_fun_handler(void)
 
 
 	}
+	
 	if(ac220v_fan_run_flag ==1){
 		
 		run_cmd_flag=1;

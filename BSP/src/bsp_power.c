@@ -10,7 +10,7 @@
 
 typedef enum {
     PWR_ON_INIT = 0,
-    PWR_ON_NTC_STABLE,
+    PWR_ON_NTC_SEND,
     PWR_ON_NORMAL_RUN,
 } power_on_state_t;
 
@@ -128,30 +128,25 @@ void power_on_init_ref(void)
 	*Return Ref: NO
 	*
 **********************************************************************/
+uint8_t fucntion_counter;
+
 void power_on_run_handler(void)
 {
 
   
- 
-	switch(pwr.state){
+   if(gl_run.process_on_step ==0){
+   	   gl_run.process_on_step ++;
+	    power_on_init_ref();
+		read_ntc_value_init();
+	}
+
+   switch(fucntion_counter){
 
 
-     case PWR_ON_INIT:  //initial reference 
-       gl_run.process_off_step =0 ; //clear power off process step .
-
-	      //Update_PtcADC_ToDisplayBoard_Value();
-			 
-		   
-		  power_on_init_ref();
-		  read_ntc_value_init();
-		  
-		
-	     gl_run.process_on_step =1;
-	 break;
-
-	 case PWR_ON_NTC_STABLE:
-
-      if(g_pro.power_on_read_ntc_flag < 4 && g_pro.gTimer_display_adc_value > 1){
+     case 0:  //initial reference 
+     
+         
+       if(g_pro.power_on_read_ntc_flag < 4 && g_pro.gTimer_display_adc_value > 2){
 		  g_pro.power_on_read_ntc_flag++;
 		  g_pro.gTimer_display_adc_value=0;
 
@@ -159,35 +154,34 @@ void power_on_run_handler(void)
 
 
 	  }
-	  else if(g_pro.gTimer_display_adc_value > 4  && g_pro.power_on_read_ntc_flag > 3){
+	 break;
+
+	 case 1:
+	  if(g_pro.gTimer_display_adc_value > 4  && g_pro.power_on_read_ntc_flag > 4){
 		 	g_pro.gTimer_display_adc_value=0;
 
            Update_PtcADC_ToDisplayBoard_Value();
 			
 	  }
 
-	   gl_run.process_on_step =2;
+	 
 	   break;  // 添加break语句
 
-	 case PWR_ON_NORMAL_RUN:
+	 case 2:
 
 
        mainboard_fun_handler();
 	  
 
-      
-	   gl_run.process_on_step =1;
-
-	 break;
+     break;
 
 	 default:
 
 	 break;
 
-	
-
 	}
-   
+     fucntion_counter ++ ;
+	 if(fucntion_counter > 2 ) fucntion_counter =0 ; //20ms * 3 = 80
  }
 
 /**********************************************************************
@@ -202,9 +196,24 @@ void power_off_run_handler(void)
 {
 
    static uint8_t fan_run_one_minute,fan_flag,wifi_first_connect;
+   static uint8_t dc_on_f = 0;
+
+
+
+   if(dc_on_f==0){
+			dc_on_f ++;
+			buzzer_sound();
+	}
+
+
+
+
+   
    switch(gl_run.process_off_step){
 
    case 0:
+
+   
    	  gl_run.process_on_step =0;
 
    	 

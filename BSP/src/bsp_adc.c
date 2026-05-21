@@ -177,7 +177,7 @@ void read_ntc_value_init(void)
 
 		sendData_Real_Temp(g_pro.read_ntc_tem_value);
 		   
-		tx_thread_sleep(2);
+		tx_thread_sleep(10);
 		copy_temperature_value= g_pro.read_ntc_tem_value;
 
 
@@ -222,7 +222,7 @@ void Update_PtcADC_ToDisplayBoard_Value(void)
 
 		sendData_Real_Temp(g_pro.read_ntc_temperature_value);
 		   
-		tx_thread_sleep(5);
+		tx_thread_sleep(10);
 		copy_temperature_value= g_pro.read_ntc_temperature_value;
 
 	

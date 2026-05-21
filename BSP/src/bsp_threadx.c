@@ -111,13 +111,27 @@ static void vTaskRunPro(ULONG thread_input)
   while(1){
     
    
-	power_onoff_handler(g_pro.gpower_on);
+	//power_onoff_handler(g_pro.gpower_on);
+	if(g_pro.gpower_on == power_on){
+     
+
+	
+		power_on_run_handler();
+	}
+	else{
+       
+	
+         power_off_run_handler();
+
+
+
+	}
 	LL_IWDG_ReloadCounter(IWDG);
       #if DEBUG_ENABLE
 				 debug_stack_run_check();
 		   #endif 
 
-    tx_thread_sleep(1);
+    tx_thread_sleep(10);//10ms *2 = 20ms .
 
 	  
     }
@@ -146,11 +160,12 @@ static void vTaskDecoderPro(ULONG thread_input)
      // 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
-              g_pro.rx_data_success_f ++;
+           
 				usart2_rx_decoder();
 				 #if DEBUG_ENABLE
 				 debug_stack_decoder_check();
 		   #endif 
+		
 
 	  }
    
@@ -175,8 +190,8 @@ static void threadx_handler(void)
 					 0, 					  /* 传递给任务的参数 */
 					 stack_decoder_pro, 	 /* 堆栈基地址 */
 					 STACK_SIZE_DECODER,	   /* 堆栈空间大小 */ 
-					 0,
-					 0,
+					 1,
+					 1,
 					 TX_NO_TIME_SLICE,
 					 TX_AUTO_START);
 				 
@@ -186,8 +201,8 @@ static void threadx_handler(void)
 					  0,							/* 传递给任务的参数 */
 					  stack_run_pro, 			   /* 堆栈基地址 */
 					  STACK_SIZE_RUN,			   /* 堆栈空间大小 */ 
-					  1,							/* 任务优先级*/
-					  1,							/* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
+					  0,							/* 任务优先级*/
+					  0,							/* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */
     

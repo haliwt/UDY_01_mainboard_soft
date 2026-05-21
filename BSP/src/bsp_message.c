@@ -95,9 +95,10 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	 	if(pdata[3]==0x01){
 	 	if(g_pro.gpower_on == power_on){
 		 
-          buzzer_sound();
+         
           g_pro.gDry = 1;
 		  DRY_OPEN();
+		   buzzer_sound();
 		  //manual close flag :
 		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
 		   tx_thread_sleep(10);
@@ -106,11 +107,11 @@ void receive_data_from_displayboard(uint8_t *pdata)
        else if(pdata[3] == 0){
 	   	 if(g_pro.gpower_on == power_on){
 		
-          buzzer_sound();
+       
           g_pro.gDry =0;
 	
           DRY_CLOSE();
-		 
+		  buzzer_sound();
 		  SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
 		  tx_thread_sleep(10);
 		  
@@ -159,9 +160,10 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	    if(pdata[3]==0x01){
        if(g_pro.gpower_on == power_on){
 	   	  
-            buzzer_sound();
+           
 			g_pro.gPlasma = 1;
 		    PLASMA_OPEN();
+			buzzer_sound();
 		  
 	
            
@@ -169,10 +171,11 @@ void receive_data_from_displayboard(uint8_t *pdata)
         }
         else if(pdata[3] == 0){
         if(g_pro.gpower_on == power_on){ 
-            buzzer_sound();
+            
 			g_pro.gPlasma = 0;
 
 		     PLASMA_CLOSE();
+		     buzzer_sound();
 		   
 		
            

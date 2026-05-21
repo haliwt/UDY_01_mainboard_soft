@@ -97,7 +97,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		 
           buzzer_sound();
           g_pro.gDry = 1;
-		
+		  DRY_OPEN();
 		  //manual close flag :
 		   SendWifiData_Answer_Cmd(0x02,0x01); //WT.EDIT 2025.01.07
 		   tx_thread_sleep(10);
@@ -136,7 +136,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.01.07
 		 tx_thread_sleep(5);
 		 g_pro.gDry = 1;
-     
+          DRY_OPEN();
 
 	 	}
 	  }

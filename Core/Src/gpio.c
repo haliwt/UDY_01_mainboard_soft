@@ -56,13 +56,13 @@ void MX_GPIO_Init(void)
   LL_GPIO_ResetOutputPin(PLASMA_CTL_GPIO_Port, PLASMA_CTL_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(SENSOR_GPIO_Port, SENSOR_Pin);
+ // LL_GPIO_ResetOutputPin(SENSOR_GPIO_Port, SENSOR_Pin);
 
   /**/
   LL_GPIO_ResetOutputPin(FAN_OUT2_GPIO_Port, FAN_OUT2_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(FAN_OUT1_GPIO_Port, FAN_OUT1_Pin);
+ // LL_GPIO_ResetOutputPin(FAN_OUT1_GPIO_Port, FAN_OUT1_Pin);
 
   /**/
   GPIO_InitStruct.Pin = RELAY_CTL_Pin;
@@ -81,12 +81,12 @@ void MX_GPIO_Init(void)
   LL_GPIO_Init(PLASMA_CTL_GPIO_Port, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = SENSOR_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(SENSOR_GPIO_Port, &GPIO_InitStruct);
+//  GPIO_InitStruct.Pin = SENSOR_Pin;
+//  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+//  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+//  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+//  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+//  LL_GPIO_Init(SENSOR_GPIO_Port, &GPIO_InitStruct);
 
   /**/
   GPIO_InitStruct.Pin = FAN_OUT2_Pin;
@@ -97,12 +97,12 @@ void MX_GPIO_Init(void)
   LL_GPIO_Init(FAN_OUT2_GPIO_Port, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = FAN_OUT1_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(FAN_OUT1_GPIO_Port, &GPIO_InitStruct);
+//  GPIO_InitStruct.Pin = FAN_OUT1_Pin;
+//  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+//  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+//  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+//  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+//  LL_GPIO_Init(FAN_OUT1_GPIO_Port, &GPIO_InitStruct);
 
 }
 

@@ -139,7 +139,7 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 
     g_pro.read_ptc_voltage  =(uint16_t)((adcx * 3300 )/4096); //amplification 1000 ,3.11V -> 3110000 uV
 
-	tx_thread_sleep(2);
+	tx_thread_sleep(1);
 
     g_pro.read_ptc_voltage = g_pro.read_ptc_voltage-100; // 放大后减去100mV对应的100000uV
 
@@ -177,7 +177,7 @@ void read_ntc_value_init(void)
 
 		sendData_Real_Temp(g_pro.read_ntc_tem_value);
 		   
-		tx_thread_sleep(5);
+		tx_thread_sleep(2);
 		copy_temperature_value= g_pro.read_ntc_tem_value;
 
 

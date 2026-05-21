@@ -40,9 +40,8 @@ static void tim14_stop_buzzer_sound_config(void)
 void buzzer_sound(void)
 {
 	tim14_buzzer_sound_config();
-    open_beep_sound();//
-    //tx_thread_sleep(2);
-	//tim14_stop_buzzer_sound_config();
+    tx_thread_sleep(2);
+	open_beep_sound();//
 
 }
 
@@ -53,14 +52,6 @@ void close_buzzer_sound(void)
 
 
 
-
-
-/*********************************************************************************************************
-*	Function Name: MODH_Poll
-*	Function: ???????. 1ms ?????
-*	Input Ref: ?
-*	Return Ref: 0 ????? 1????????
-*********************************************************************************************************/
 
 
 

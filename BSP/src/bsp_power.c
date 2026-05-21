@@ -1,7 +1,7 @@
 /*
  * bsp_power.c
  *
- *  Created on: 2025å¹?3æœ?4æ—?
+ *  Created on: 2025ï¿½?3ï¿½?4ï¿½?
  *      Author: Administrator
  */
 #include "bsp.h"
@@ -151,6 +151,7 @@ void power_on_run_handler(void)
 	  }
 
 	   gl_run.process_on_step =2;
+	   break;  // æ·»åŠ breakè¯­å¥
 
 	 case 2:
 

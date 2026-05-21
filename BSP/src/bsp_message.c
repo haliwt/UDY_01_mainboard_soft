@@ -231,12 +231,12 @@ void receive_data_from_displayboard(uint8_t *pdata)
      case 0x06: //buzzer sound command 
 
     
-          if(pdata[3]==0x01){
+        if(pdata[3]==0x01){
            buzzer_sound();
+		   //SendWifiData_Answer_Cmd(0x06,0x01); //WT.EDIT 2024.12.28
+		   //tx_thread_sleep(5);
         }
-        else if(pdata[4] == 0x0){ // don't buzzer sound .
-        
-        }
+       
     	
 
      break;
@@ -455,7 +455,7 @@ static void copy_receive_data(uint8_t cmd,uint8_t data)
 	   case CMD_PTC :
 	   	if(data == 1){
 
-		   buzzer_sound();
+		   //buzzer_sound();
 		   g_pro.gDry=1;
 		   DRY_OPEN();
 		  
@@ -473,7 +473,7 @@ static void copy_receive_data(uint8_t cmd,uint8_t data)
 
 	   case CMD_CONNECT_WIFI:
 	   	if(data == 1){
-			buzzer_sound();
+			//buzzer_sound();
           
 
 		}

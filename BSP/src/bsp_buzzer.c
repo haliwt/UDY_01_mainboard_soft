@@ -40,8 +40,8 @@ static void tim14_stop_buzzer_sound_config(void)
 void buzzer_sound(void)
 {
 	tim14_buzzer_sound_config();
-    tx_thread_sleep(2);
-	open_beep_sound();//
+   
+	open_beep_sound();// tx_thread_sleep(2);
 
 }
 

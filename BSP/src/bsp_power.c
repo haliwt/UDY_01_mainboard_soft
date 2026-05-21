@@ -8,6 +8,22 @@
 
 #define SWITCH_THRESHOLD 2
 
+typedef enum {
+    PWR_ON_INIT = 0,
+    PWR_ON_NTC_STABLE,
+    PWR_ON_NORMAL_RUN,
+} power_on_state_t;
+
+typedef struct {
+    power_on_state_t state;
+    UINT  ntc_cnt;
+    UINT  ntc_tick;   // 以 20ms 为单位计数
+    UINT  adc_tick;
+} power_on_ctx_t;
+
+static power_on_ctx_t pwr = {
+    .state = PWR_ON_INIT,
+};
 
 
 
@@ -117,10 +133,10 @@ void power_on_run_handler(void)
 
   
  
-	switch(gl_run.process_on_step){
+	switch(pwr.state){
 
 
-     case 0:  //initial reference 
+     case PWR_ON_INIT:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
 
 	      //Update_PtcADC_ToDisplayBoard_Value();
@@ -133,7 +149,7 @@ void power_on_run_handler(void)
 	     gl_run.process_on_step =1;
 	 break;
 
-	 case 1:
+	 case PWR_ON_NTC_STABLE:
 
       if(g_pro.power_on_read_ntc_flag < 4 && g_pro.gTimer_display_adc_value > 1){
 		  g_pro.power_on_read_ntc_flag++;
@@ -153,7 +169,7 @@ void power_on_run_handler(void)
 	   gl_run.process_on_step =2;
 	   break;  // 添加break语句
 
-	 case 2:
+	 case PWR_ON_NORMAL_RUN:
 
 
        mainboard_fun_handler();

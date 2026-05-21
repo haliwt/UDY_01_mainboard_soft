@@ -20,8 +20,16 @@ static void tim14_buzzer_sound_config(void)
 
 static void tim14_stop_buzzer_sound_config(void)
 {
+   // 禁用计数器
    LL_TIM_DisableCounter(TIM14);
+   
+   // 禁用通道
    LL_TIM_CC_DisableChannel(TIM14,LL_TIM_CHANNEL_CH1);
+   
+   // 禁用所有输出
+   LL_TIM_DisableAllOutputs(TIM14);
+   
+   // 清除比较值
    LL_TIM_OC_SetCompareCH1(TIM14,0);
 
 
@@ -32,9 +40,9 @@ static void tim14_stop_buzzer_sound_config(void)
 void buzzer_sound(void)
 {
 	tim14_buzzer_sound_config();
-    //open_beep_sound();//
-    tx_thread_sleep(2);
-	tim14_stop_buzzer_sound_config();
+    open_beep_sound();//
+    //tx_thread_sleep(2);
+	//tim14_stop_buzzer_sound_config();
 
 }
 
@@ -54,36 +62,5 @@ void close_buzzer_sound(void)
 *	Return Ref: 0 ????? 1????????
 *********************************************************************************************************/
 
-void Buzzer_Fan_Error_Sound(void)
-{
-   
- 
-    buzzer_sound();
-	HAL_Delay(100);
-	  buzzer_sound();
-	HAL_Delay(100);
-	  buzzer_sound();
-	HAL_Delay(100);
-	  buzzer_sound();
-	HAL_Delay(100);
-
-}
-
-void Buzzer_Ptc_Error_Sound(void)
-{
-
-	  buzzer_sound();
-	HAL_Delay(50);
-	  buzzer_sound();
-	HAL_Delay(50);
-	  buzzer_sound();
-	HAL_Delay(50);
-	  buzzer_sound();
-	HAL_Delay(50);
-	  buzzer_sound();
-	HAL_Delay(50);
-
-
-}
 
 

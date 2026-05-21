@@ -129,8 +129,9 @@ void usart2_rx_decoder(void)
 	check_code =bcc_check(gl_tMsg.usData,gl_tMsg.data_length);
 
 	if(check_code == gl_tMsg.bcc_check_code ){
+	  gl_tMsg.usData[0]=0;
 
-	receive_data_from_displayboard(gl_tMsg.usData);
+	  receive_data_from_displayboard(gl_tMsg.usData);
 	
 	}
 

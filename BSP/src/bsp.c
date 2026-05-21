@@ -29,6 +29,9 @@ void bsp_init(void)
 {
 	// 初始化 ADC DMA
 	bsp_adc_dma_init();
+    
+    // 确保蜂鸣器在初始化后处于关闭状态
+    close_buzzer_sound();
 }
 
 

@@ -146,15 +146,14 @@ static void vTaskDecoderPro(ULONG thread_input)
      // 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
-          g_pro.rx_data_success_f ++;
+              g_pro.rx_data_success_f ++;
 				usart2_rx_decoder();
-				LL_IWDG_ReloadCounter(IWDG);
 				 #if DEBUG_ENABLE
 				 debug_stack_decoder_check();
 		   #endif 
 
 	  }
-      tx_thread_sleep(1) ;
+   
     }
 }
  /**********************************************************************************************************

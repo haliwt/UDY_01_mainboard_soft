@@ -111,8 +111,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	
           DRY_CLOSE();
 		 
-		  ///SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
-		  ///tx_thread_sleep(5);
+		  SendWifiData_Answer_Cmd(0x02,0x0); //WT.EDIT 2025.01.07
+		  tx_thread_sleep(10);
 		  
             
          

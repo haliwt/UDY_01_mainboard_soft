@@ -42,8 +42,8 @@ void buzzer_sound(void)
 	tim14_buzzer_sound_config();
    
 	open_beep_sound();// tx_thread_sleep(2);
-	tx_thread_sleep(2);
-	tim14_stop_buzzer_sound_config();
+	//tx_thread_sleep(2);
+	//tim14_stop_buzzer_sound_config();
 
 }
 

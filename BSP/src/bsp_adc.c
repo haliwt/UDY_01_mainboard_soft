@@ -66,7 +66,7 @@ void bsp_adc_dma_init(void)
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, ADC_DMA_BUFFER_SIZE);
     
     // 设置DMA为循环模式，这样DMA会自动循环传输，不需要手动重新启动
-    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_2,  LL_DMA_MODE_NORMAL);
+    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MODE_NORMAL);//LL_DMA_MODE_CIRCULAR); //LL_DMA_MODE_NORMAL);
     
     // 确保数据对齐正确（半字对齐，16位）
     LL_DMA_SetPeriphSize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PDATAALIGN_HALFWORD);
@@ -177,7 +177,7 @@ void read_ntc_value_init(void)
 
 		sendData_Real_Temp(g_pro.read_ntc_tem_value);
 		   
-		tx_thread_sleep(10);
+		//tx_thread_sleep(10);
 		copy_temperature_value= g_pro.read_ntc_tem_value;
 
 
@@ -222,7 +222,7 @@ void Update_PtcADC_ToDisplayBoard_Value(void)
 
 		sendData_Real_Temp(g_pro.read_ntc_temperature_value);
 		   
-		tx_thread_sleep(10);
+		//tx_thread_sleep(10);
 		copy_temperature_value= g_pro.read_ntc_temperature_value;
 
 	

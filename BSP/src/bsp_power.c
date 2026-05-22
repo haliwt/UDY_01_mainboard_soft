@@ -132,7 +132,7 @@ uint8_t fucntion_counter;
 
 void power_on_run_handler(void)
 {
-
+     static uint8_t  counter=0;
   
    if(gl_run.process_on_step ==0){
    	   gl_run.process_on_step ++;
@@ -148,7 +148,7 @@ void power_on_run_handler(void)
 
 
 	
-	  if(g_pro.gTimer_display_adc_value > 4 ){
+	  if(g_pro.gTimer_display_adc_value > 1 ){
 		 	g_pro.gTimer_display_adc_value=0;
 
            Update_PtcADC_ToDisplayBoard_Value();
@@ -165,6 +165,14 @@ void power_on_run_handler(void)
 	  
 
      break;
+
+	 case 2:
+       counter++;
+	   if(counter > 19){
+	   	 counter = 0;
+        bsp_adc_dma_init();
+	  }
+	 break;
 
 	 default:
 

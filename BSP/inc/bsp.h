@@ -110,7 +110,7 @@ typedef struct _process{
     uint8_t temperature_decade;    // �?
     uint8_t temperature_unit;//度�??
 	uint8_t read_ntc_temperature_value;
-	uint8_t power_on_read_ntc_flag ;
+
     uint8_t read_ntc_tem_value;
     
 

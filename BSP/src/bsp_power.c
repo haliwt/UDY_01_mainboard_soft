@@ -108,7 +108,7 @@ void power_on_init_ref(void)
  
     g_pro.gTimer_display_adc_value=0;
 	g_pro.delay_run_adc_counter=0;
-	g_pro.power_on_read_ntc_flag = 0;
+
 	g_pro.gTimer_display_adc_value =0;
 
 	DRY_OPEN();
@@ -145,19 +145,10 @@ void power_on_run_handler(void)
 
      case 0:  //initial reference 
      
-         
-       if(g_pro.power_on_read_ntc_flag < 4 && g_pro.gTimer_display_adc_value > 2){
-		  g_pro.power_on_read_ntc_flag++;
-		  g_pro.gTimer_display_adc_value=0;
-
-          read_ntc_value_init();
 
 
-	  }
-	 break;
-
-	 case 1:
-	  if(g_pro.gTimer_display_adc_value > 4  && g_pro.power_on_read_ntc_flag > 4){
+	
+	  if(g_pro.gTimer_display_adc_value > 4 ){
 		 	g_pro.gTimer_display_adc_value=0;
 
            Update_PtcADC_ToDisplayBoard_Value();
@@ -165,9 +156,9 @@ void power_on_run_handler(void)
 	  }
 
 	 
-	   break;  // 添加break语句
+	  break;  // 添加break语句
 
-	 case 2:
+	 case 1:
 
 
        mainboard_fun_handler();

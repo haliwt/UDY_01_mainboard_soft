@@ -174,8 +174,6 @@ void USART2_DMA_Send(const uint8_t *txBuf,uint16_t txlen)
     /* 使能 DMA 中断 */
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_1);
-
-    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
     
       /* 6. 启动 DMA */
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);

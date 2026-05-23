@@ -38,7 +38,8 @@ uint16_t bsp_adc_get_dma_result(uint32_t ch);
 *****************************************************************/
 void bsp_adc_dma_init(void)
 {
-    // 1. 重新配置ADC参数
+   #if 0
+// 1. 重新配置ADC参数
     // 配置ADC为扫描模式，连续转换
     LL_ADC_REG_SetSequencerLength(ADC1, LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS);
     LL_ADC_REG_SetContinuousMode(ADC1, LL_ADC_REG_CONV_CONTINUOUS);
@@ -66,7 +67,7 @@ void bsp_adc_dma_init(void)
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, ADC_DMA_BUFFER_SIZE);
     
     // 设置DMA为循环模式，这样DMA会自动循环传输，不需要手动重新启动
-    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MODE_NORMAL);//LL_DMA_MODE_CIRCULAR); //LL_DMA_MODE_NORMAL);
+    LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MODE_NORMAL);//LL_DMA_MODE_NORMAL);//LL_DMA_MODE_CIRCULAR); //LL_DMA_MODE_NORMAL);
     
     // 确保数据对齐正确（半字对齐，16位）
     LL_DMA_SetPeriphSize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PDATAALIGN_HALFWORD);
@@ -89,6 +90,43 @@ void bsp_adc_dma_init(void)
     adc_dma_buffer[0] = 0;
     adc_dma_buffer[1] = 0;
     adc_dma_conversion_complete = 0;
+	#else 
+
+		LL_ADC_REG_SetSequencerLength(ADC1, LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS);
+		LL_ADC_REG_SetContinuousMode(ADC1, LL_ADC_REG_CONV_CONTINUOUS);
+		LL_ADC_REG_SetDMATransfer(ADC1, LL_ADC_REG_DMA_TRANSFER_UNLIMITED);
+	
+		LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_0);
+		LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_1);
+	
+		LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
+	
+		LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_2,
+							   (uint32_t)&ADC1->DR,
+							   (uint32_t)adc_dma_buffer,
+							   LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+	
+		LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, ADC_DMA_BUFFER_SIZE);
+	
+		LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MODE_CIRCULAR);
+	
+		LL_DMA_SetPeriphSize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PDATAALIGN_HALFWORD);
+		LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MDATAALIGN_HALFWORD);
+	
+		// 不要使能 TC 中断
+		// LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
+	
+		LL_ADC_Enable(ADC1);
+		while(!LL_ADC_IsActiveFlag_ADRDY(ADC1));
+	
+		LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+		LL_ADC_REG_StartConversion(ADC1);
+
+		adc_dma_conversion_complete = 0;
+	
+
+
+	#endif 
 }
 
 /*****************************************************************
@@ -131,15 +169,15 @@ uint16_t Get_Adc_Channel(uint32_t ch)
 void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 {
     
-	uint16_t adcx;
+	//uint16_t adcx;
 	
-	adcx = Get_Adc_Channel(channel);
+	//adcx = Get_Adc_Channel(channel);adc_dma_buffer[1];
 
 	//tx_thread_sleep(10);
 
-    g_pro.read_ptc_voltage  =(uint16_t)((adcx * 3300 )/4096); //amplification 1000 ,3.11V -> 3110000 uV
+    g_pro.read_ptc_voltage  =(uint16_t)((adc_dma_buffer[1] * 3300 )/4096); //amplification 1000 ,3.11V -> 3110000 uV
 
-	tx_thread_sleep(1);
+	//tx_thread_sleep(1);
 
     g_pro.read_ptc_voltage = g_pro.read_ptc_voltage-100; // 放大后减去100mV对应的100000uV
 

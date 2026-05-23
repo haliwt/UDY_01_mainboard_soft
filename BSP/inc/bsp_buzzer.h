@@ -11,9 +11,8 @@
 
 void buzzer_sound(void);
 
-//void Buzzer_Fan_Error_Sound(void);
+void buzzer_dc_power_sound(void);
 
-//void Buzzer_Ptc_Error_Sound(void);
 
 void close_buzzer_sound(void);
 

@@ -22,8 +22,8 @@
 /***********************************************************************************************************
 											函数声明
 ***********************************************************************************************************/
-#define STACK_SIZE_DECODER  1280//512//128//1792//3072//2048//1024//896//768
-#define STACK_SIZE_RUN      896//1024//1536//1280//1024//1536//1024//896//1792//1664//1280
+#define STACK_SIZE_DECODER  1024//128
+#define STACK_SIZE_RUN      1024//896//1024//1536//1280//1024//1536//1024//896//1792//1664//1280
 
 
 __attribute__((aligned(8))) static UCHAR stack_run_pro[STACK_SIZE_RUN];
@@ -35,7 +35,7 @@ __attribute__((aligned(8))) static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
 static TX_THREAD thread_run;
 static TX_THREAD thread_decoder;
 
-
+wo
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
 
@@ -210,8 +210,8 @@ static void threadx_handler(void)
 				   "20msTimer",
 				   beep_timer_callback, /*callback function */
    				   0,
-				   2,                    /* 第一次延迟 20ms*/
-				   2,                    /*周期 20 ticks*/
+				   7,                    /* 第一次延迟 20ms*/
+				   7,                    /*周期 20 ticks*/
 				   TX_AUTO_ACTIVATE);
 	
 }

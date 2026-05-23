@@ -15,7 +15,7 @@
 
 
 
-#define DEBUG_ENABLE   1
+#define DEBUG_ENABLE   0
 
 
 
@@ -35,7 +35,6 @@ __attribute__((aligned(8))) static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
 static TX_THREAD thread_run;
 static TX_THREAD thread_decoder;
 
-wo
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
 
@@ -190,10 +189,10 @@ static void threadx_handler(void)
 					 0, 					  /* 传递给任务的参数 */
 					 stack_decoder_pro, 	 /* 堆栈基地址 */
 					 STACK_SIZE_DECODER,	   /* 堆栈空间大小 */ 
-					 1,
-					 1,
-					 TX_NO_TIME_SLICE,
-					 TX_AUTO_START);
+					 0,                        /* 任务优先级*/
+					 0,                       /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
+					 TX_NO_TIME_SLICE,        /* 不开启时间片 */
+					 TX_AUTO_START);           /* 创建后立即启动 */
 				 
 	 tx_thread_create(&thread_run,				   /* 任务控制块地址 */ 
 					  "UiPro",					   /* 任务名 */
@@ -201,7 +200,7 @@ static void threadx_handler(void)
 					  0,							/* 传递给任务的参数 */
 					  stack_run_pro, 			   /* 堆栈基地址 */
 					  STACK_SIZE_RUN,			   /* 堆栈空间大小 */ 
-					  0,							/* 任务优先级*/
+					  1,							/* 任务优先级*/
 					  0,							/* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */

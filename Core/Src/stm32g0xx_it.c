@@ -116,10 +116,7 @@ void DMA1_Channel1_IRQHandler(void)
 	 }
 	 
 	 /* Check if transfer error interrupt */
-	 if(LL_DMA_IsActiveFlag_TE1(DMA1) != RESET) {
-		 LL_DMA_ClearFlag_TE1(DMA1);
-		 // 处理DMA传输错误
-	 }
+	
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
   if(LL_DMA_IsActiveFlag_TE1(DMA1) != RESET) {

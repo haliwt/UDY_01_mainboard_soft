@@ -122,6 +122,10 @@ void DMA1_Channel1_IRQHandler(void)
 	 }
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+  if(LL_DMA_IsActiveFlag_TE1(DMA1) != RESET) {
+		  LL_DMA_ClearFlag_TE1(DMA1);
+		  // 处理DMA传输错误
+	  }
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
@@ -142,10 +146,25 @@ void DMA1_Channel2_3_IRQHandler(void)
     // Set the conversion complete flag
     adc_dma_conversion_complete = 1;
   }
+
+  if(LL_DMA_IsActiveFlag_TC3(DMA1))
+  {
+    // Clear the transfer complete flag
+    LL_DMA_ClearFlag_TC3(DMA1);
+    
+    // Set the conversion complete flag
+  }
  
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
-
+    if(LL_DMA_IsActiveFlag_TE2(DMA1) != RESET) {
+		 LL_DMA_ClearFlag_TE2(DMA1);
+		 // 处理DMA传输错误
+	 }
+	if(LL_DMA_IsActiveFlag_TE3(DMA1) != RESET) {
+		 LL_DMA_ClearFlag_TE3(DMA1);
+		 // 处理DMA传输错误
+	 }
   /* USER CODE END DMA1_Channel2_3_IRQn 1 */
 }
 

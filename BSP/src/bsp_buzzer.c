@@ -24,10 +24,10 @@ static void tim14_stop_buzzer_sound_config(void)
    LL_TIM_DisableCounter(TIM14);
    
    // 禁用通道
- //  LL_TIM_CC_DisableChannel(TIM14,LL_TIM_CHANNEL_CH1);
+   LL_TIM_CC_DisableChannel(TIM14,LL_TIM_CHANNEL_CH1);
    
    // 禁用所有输出
-   //LL_TIM_DisableAllOutputs(TIM14);
+   LL_TIM_DisableAllOutputs(TIM14);
    
    // 清除比较值
   // LL_TIM_OC_SetCompareCH1(TIM14,0);
@@ -41,8 +41,10 @@ void buzzer_sound(void)
 {
 	tim14_buzzer_sound_config();
    
-	open_beep_sound();// tx_thread_sleep(2);
+	//open_beep_sound();// 
+	tx_thread_sleep(3);
 	//tx_thread_sleep(6);
+	tim14_stop_buzzer_sound_config();
 
 
 }

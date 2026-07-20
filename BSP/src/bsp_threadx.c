@@ -38,14 +38,14 @@ static TX_THREAD thread_decoder;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
 
-//TX_TIMER beep_timer;
+TX_TIMER beep_timer;
 
 /* 创建任务通信机制 */
 static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
 
 static void vTaskRunPro(ULONG thread_input);
 static void vTaskStart(ULONG thread_input);
-//static void beep_timer_callback(ULONG input);
+static void beep_timer_callback(ULONG input);
 
 
 
@@ -204,14 +204,14 @@ static void threadx_handler(void)
 					  1,							/* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */
-   #if 0
+   #if 1
    tx_timer_create(&beep_timer,     /* timer of  block */
 				   "20msTimer",
 				   beep_timer_callback, /*callback function */
    				   0,
-				   7,                    /* 第一次延迟 20ms*/
-				   7,                    /*周期 20 ticks*/
-				   TX_AUTO_ACTIVATE);
+				   2,                    /* 第一次延迟 20ms*/
+				   0,                    /*0--一次性调用,周期 20 ticks*/
+				   TX_NO_ACTIVATE); // 初始状态：不激活//TX_AUTO_ACTIVATE);
   #endif 
 	
 }
@@ -233,9 +233,16 @@ static void beep_timer_callback(ULONG input)
 }
 void open_beep_sound(void)
 {
-  //tx_timer_activate(&beep_timer);
+  tx_timer_activate(&beep_timer);
+ 
 }
 
+
+void thread_buzzer_set_oece(void)
+{
+ tx_timer_change(&beep_timer, 2, 0);
+
+}
 
 /****************************************************************
 *

@@ -19,5 +19,7 @@ void open_beep_sound(void);
 
 
 
+void thread_buzzer_set_oece(void);
+
 
 #endif /* BSP_INC_BSP_FREERTOS_H_ */
